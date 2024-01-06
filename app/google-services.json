@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "753379717473",
+    "project_id": "teachup-45084",
+    "storage_bucket": "teachup-45084.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:753379717473:android:3e8e168b8094387e54d520",
+        "android_client_info": {
+          "package_name": "com.example.teachup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSMBXu9Wk5BdEjB5vjdQaCJ3XMeCuKBRI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
