@@ -6,6 +6,9 @@
     <color name="PrimaryDark">#075e54</color>
     <color name="PrimaryAccent">#25d366</color>
     <color name="PrimaryVarient">#ece5dd</color>
+    <color name="PrimaryGray">#cedbe0</color>
+    <color name="PrimaryBlue">#19629b</color>
+    <color name="LightBlue">#bcd1dc</color>
 
 
 </resources>
