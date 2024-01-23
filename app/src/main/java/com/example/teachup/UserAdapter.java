@@ -36,13 +36,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
 
     @NonNull
     @Override
-    public UserAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public UserAdapter.MyViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_row, parent, false);
         return new MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder (@NonNull UserAdapter.MyViewHolder holder, int position) {
         // Assign user's name/email to holder's name/email.
         UserModel userModel = userModelList.get(position);
         holder.name.setText(userModel.getUserName());
@@ -50,7 +50,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick (View v) {
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("id", userModel.getUserID());
                 intent.putExtra("name", userModel.getUserName());
@@ -59,20 +59,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
         });
     }
 
-    // Return user list length.
+    // Getters.
     @Override
-    public int getItemCount() {
+    public int getItemCount () {
         return userModelList.size();
     }
-
-    // Return user list.
-    public List <UserModel> getUserModelList() {
+    public List <UserModel> getUserModelList () {
         return userModelList;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView name, email;
-        public MyViewHolder(@NonNull View itemView) {
+        public MyViewHolder (@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.username);
             email = itemView.findViewById(R.id.useremail);
