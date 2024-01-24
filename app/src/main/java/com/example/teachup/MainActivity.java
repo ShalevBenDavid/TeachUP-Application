@@ -46,16 +46,22 @@ public class MainActivity extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                userAdapter.clear();
+                List<UserModel> userModelList = userAdapter.getUserModelList();
+
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String uId = dataSnapshot.getKey();
                     UserModel userModel = dataSnapshot.getValue(UserModel.class);
+
+                    // Verify that we got a valid user which isn't current user.
                     if (userModel != null && userModel.getUserID() != null &&
                             !userModel.getUserID().equals(FirebaseAuth.getInstance().getUid())) {
-                        userAdapter.add(userModel);
+                        // Check if the user is already in the list to avoid duplicates
+                        if (!userModelList.contains(userModel)) {
+                            userAdapter.add(userModel);
+                        }
                     }
                 }
-                List <UserModel> userModelList = userAdapter.getUserModelList();
+                // Update the UI (view)
                 userAdapter.notifyDataSetChanged();
             }
 

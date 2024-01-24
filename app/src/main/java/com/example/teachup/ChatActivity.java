@@ -26,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,7 +55,7 @@ public class ChatActivity extends AppCompatActivity {
 
         if (receiverId != null) {
             senderRoom = FirebaseAuth.getInstance().getUid() + receiverId;
-            receiverRoom = FirebaseAuth.getInstance().getUid() + receiverId;
+            receiverRoom = receiverId + FirebaseAuth.getInstance().getUid();;
         }
 
         // Link send button and message text by id.
@@ -77,6 +79,15 @@ public class ChatActivity extends AppCompatActivity {
                     MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
                     messages.add(messageModel);
                 }
+
+                // Sort messages based on time.
+                messages.sort(new Comparator<MessageModel>() {
+                    @Override
+                    public int compare(MessageModel m1, MessageModel m2) {
+                        return Long.compare(m1.getTime(), m2.getTime());
+                    }
+                });
+
                 messageAdapter.clear();
                 for (MessageModel message : messages) {
                     messageAdapter.add(message);
@@ -109,9 +120,9 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage(String message) {
         // Give the message a random id.
         String messageId = UUID.randomUUID().toString();
-        // Create a message model for message to link to firebase user.
-        MessageModel messageModel = new MessageModel(messageId,
-                FirebaseAuth.getInstance().getUid(), message);
+        // Create a message model for message and link to firebase user.
+        MessageModel messageModel = new MessageModel
+                (messageId, FirebaseAuth.getInstance().getUid(), message, System.currentTimeMillis());
         // Add message model to messages list.
         messageAdapter.add(messageModel);
 
