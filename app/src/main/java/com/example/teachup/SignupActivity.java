@@ -40,42 +40,36 @@ public class SignupActivity extends AppCompatActivity {
         SignupBtn = findViewById(R.id.signup);
 
         // Sign-Up click button event.
-        SignupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Save email, password and name.
-                name = userName.getText().toString().trim();
-                email = userEmail.getText().toString().trim();
-                password = userPassword.getText().toString().trim();
-                // If no name was entered, print error.
-                if (TextUtils.isEmpty(name)) {
-                    userEmail.setError("No Name Was Entered");
-                    userEmail.requestFocus();
-                    return;
-                }
-                // If no email was entered, print error.
-                if (TextUtils.isEmpty(email)) {
-                    userEmail.setError("No Email Was Entered");
-                    userEmail.requestFocus();
-                    return;
-                }
-                // If no password was entered, print error.
-                if (TextUtils.isEmpty(password)) {
-                    userPassword.setError("No Password Was Entered");
-                    userPassword.requestFocus();
-                    return;
-                }
-                SignUp();
+        SignupBtn.setOnClickListener(v -> {
+            // Save email, password and name.
+            name = userName.getText().toString().trim();
+            email = userEmail.getText().toString().trim();
+            password = userPassword.getText().toString().trim();
+            // If no name was entered, print error.
+            if (TextUtils.isEmpty(name)) {
+                userEmail.setError("No Name Was Entered");
+                userEmail.requestFocus();
+                return;
             }
+            // If no email was entered, print error.
+            if (TextUtils.isEmpty(email)) {
+                userEmail.setError("No Email Was Entered");
+                userEmail.requestFocus();
+                return;
+            }
+            // If no password was entered, print error.
+            if (TextUtils.isEmpty(password)) {
+                userPassword.setError("No Password Was Entered");
+                userPassword.requestFocus();
+                return;
+            }
+            SignUp();
         });
 
         // Sign-Up click button event.
-        SigninBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SignupActivity.this, SigninActivity.class);
-                startActivity(intent);
-            }
+        SigninBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(SignupActivity.this, SigninActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -88,32 +82,24 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void SignUp() {
+        // Sign Up account and update database.
+        // Sign Up failed.
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.trim(), password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    // Sign Up account and update database.
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        UserProfileChangeRequest userProfileChangeRequest =
-                                new UserProfileChangeRequest.Builder().setDisplayName(name).build();
-                        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                        firebaseUser.updateProfile(userProfileChangeRequest);
-                        UserModel userModel = new UserModel
-                                (FirebaseAuth.getInstance().getUid(), name, email, password);
-                        databaseReference.child(FirebaseAuth.getInstance().getUid())
-                                .setValue(userModel);
-                        Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                        intent.putExtra("name", name);
-                        startActivity(intent);
-                        finish();
-                    }
+                .addOnSuccessListener(authResult -> {
+                    UserProfileChangeRequest userProfileChangeRequest =
+                            new UserProfileChangeRequest.Builder().setDisplayName(name).build();
+                    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                    firebaseUser.updateProfile(userProfileChangeRequest);
+                    UserModel userModel = new UserModel
+                            (FirebaseAuth.getInstance().getUid(), name, email, password);
+                    databaseReference.child(FirebaseAuth.getInstance().getUid())
+                            .setValue(userModel);
+                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                    intent.putExtra("name", name);
+                    startActivity(intent);
+                    finish();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    // Sign Up failed.
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(SignupActivity.this, "SignUp failed",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnFailureListener(e -> Toast.makeText(SignupActivity.this, "SignUp failed",
+                        Toast.LENGTH_SHORT).show());
     }
 }

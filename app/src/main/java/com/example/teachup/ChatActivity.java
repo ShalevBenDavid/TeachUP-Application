@@ -81,12 +81,7 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
                 // Sort messages based on time.
-                messages.sort(new Comparator<MessageModel>() {
-                    @Override
-                    public int compare(MessageModel m1, MessageModel m2) {
-                        return Long.compare(m1.getTime(), m2.getTime());
-                    }
-                });
+                messages.sort(Comparator.comparingLong(MessageModel::getTime));
 
                 messageAdapter.clear();
                 for (MessageModel message : messages) {
@@ -102,17 +97,14 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         // Clicking the send button.
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String message = messageText.getText().toString();
-                // If there is a message, send it. Otherwise, show error and grey out the button.
-                if (message.trim().length() > 0) {
-                    sendMessage(message);
-                } else {
-                    Toast.makeText(ChatActivity.this, "Message can't be empty",
-                            Toast.LENGTH_SHORT).show();
-                }
+        sendBtn.setOnClickListener(v -> {
+            String message = messageText.getText().toString();
+            // If there is a message, send it. Otherwise, show error and grey out the button.
+            if (message.trim().length() > 0) {
+                sendMessage(message);
+            } else {
+                Toast.makeText(ChatActivity.this, "Message can't be empty",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -127,19 +119,11 @@ public class ChatActivity extends AppCompatActivity {
         messageAdapter.add(messageModel);
 
         senderReference.child(messageId).setValue(messageModel)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
+                .addOnSuccessListener(unused -> {
 
-                    }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(ChatActivity.this, "Failed to send message",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnFailureListener(e -> Toast.makeText(ChatActivity.this, "Failed to send message",
+                        Toast.LENGTH_SHORT).show());
         receiverReference.child(messageId).setValue(messageModel);
         // Scroll view to the last message sent.
         recyclerView.scrollToPosition(messageAdapter.getItemCount() - 1);

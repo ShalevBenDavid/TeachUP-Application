@@ -24,7 +24,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     UserAdapter userAdapter;
-    String yourName;
     DatabaseReference databaseReference;
 
     @Override
@@ -34,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        // Set a custom title for the Toolbar
+        getSupportActionBar().setTitle("Participants");
         String userName = getIntent().getStringExtra("user");
 
         userAdapter = new UserAdapter(this);

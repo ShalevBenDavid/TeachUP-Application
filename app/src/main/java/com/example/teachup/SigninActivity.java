@@ -40,35 +40,29 @@ public class SigninActivity extends AppCompatActivity {
         SignupBtn = findViewById(R.id.signup);
 
         // Sign-In click button event.
-        SigninBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Save email and password.
-                email = userEmail.getText().toString().trim();
-                password = userPassword.getText().toString().trim();
-                // If no email was entered, print error.
-                if (TextUtils.isEmpty(email)) {
-                    userEmail.setError("No Email Was Entered");
-                    userEmail.requestFocus();
-                    return;
-                }
-                // If no password was entered, print error.
-                if (TextUtils.isEmpty(password)) {
-                    userPassword.setError("No Password Was Entered");
-                    userPassword.requestFocus();
-                    return;
-                }
-                SignIn();
+        SigninBtn.setOnClickListener(v -> {
+            // Save email and password.
+            email = userEmail.getText().toString().trim();
+            password = userPassword.getText().toString().trim();
+            // If no email was entered, print error.
+            if (TextUtils.isEmpty(email)) {
+                userEmail.setError("No Email Was Entered");
+                userEmail.requestFocus();
+                return;
             }
+            // If no password was entered, print error.
+            if (TextUtils.isEmpty(password)) {
+                userPassword.setError("No Password Was Entered");
+                userPassword.requestFocus();
+                return;
+            }
+            SignIn();
         });
 
         // Sign-Up click button event.
-        SignupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SigninActivity.this, SignupActivity.class);
-                startActivity(intent);
-            }
+        SignupBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(SigninActivity.this, SignupActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -83,33 +77,27 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void SignIn() {
+        // Sign In failed.
+        // Sign In succeeded.
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email.trim(), password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    // Sign In succeeded.
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        String username = FirebaseAuth.getInstance().getCurrentUser()
-                                .getDisplayName();
-                        Intent intent = new Intent(SigninActivity.this, MainActivity.class);
-                        intent.putExtra("name", username);
-                        startActivity(intent);
-                        finish();
-                    }
+                .addOnSuccessListener(authResult -> {
+                    String username = FirebaseAuth.getInstance().getCurrentUser()
+                            .getDisplayName();
+                    Intent intent = new Intent(SigninActivity.this, MainActivity.class);
+                    intent.putExtra("name", username);
+                    startActivity(intent);
+                    finish();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    // Sign In failed.
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // If user wasn't found in database, print error.
-                        if (e instanceof FirebaseAuthInvalidUserException) {
-                            Toast.makeText(SigninActivity.this, "User Doesn't Exists",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        // Otherwise, login failed for other reason.
-                        else {
-                            Toast.makeText(SigninActivity.this, "Authentication Failed",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                .addOnFailureListener(e -> {
+                    // If user wasn't found in database, print error.
+                    if (e instanceof FirebaseAuthInvalidUserException) {
+                        Toast.makeText(SigninActivity.this, "User Doesn't Exists",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    // Otherwise, login failed for other reason.
+                    else {
+                        Toast.makeText(SigninActivity.this, "Authentication Failed",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
