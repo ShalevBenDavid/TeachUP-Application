@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -106,6 +108,25 @@ public class ChatActivity extends AppCompatActivity {
                 Toast.makeText(ChatActivity.this, "Message can't be empty",
                         Toast.LENGTH_SHORT).show();
             }
+        });
+
+        // Add a TextWatcher to the EditText
+        messageText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Check if there's text in the text box and set the send icon accordingly.
+                if (charSequence.length() > 0) {
+                    sendBtn.setImageResource(R.drawable.send_icon_after);
+                } else {
+                    sendBtn.setImageResource(R.drawable.send_icon_before);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
         });
     }
 

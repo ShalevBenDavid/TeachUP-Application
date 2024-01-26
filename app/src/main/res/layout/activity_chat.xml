@@ -46,10 +46,11 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/messageEdit"
+            android:layout_alignBottom="@id/messageEdit"
             android:layout_marginRight="10dp"
-            android:layout_marginVertical="8dp"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/send_icon" />
+            android:src="@drawable/send_icon_before"/>
     </RelativeLayout>
 
 </RelativeLayout>
