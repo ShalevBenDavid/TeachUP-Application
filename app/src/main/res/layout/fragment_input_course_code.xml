@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    tools:context=".InputCourseCodeFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/bg_color"
+            android:text="Enter a Course Code"
+            android:id="@+id/codeInputHeader"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="20sp"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_below="@id/codeInputHeader"
+            android:background="@drawable/edittext_bg"
+            android:hint="Course Code"
+            android:paddingStart="15dp"
+            android:id="@+id/courseCodeET"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:layout_below="@id/courseCodeET"
+            android:layout_centerHorizontal="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/courseCodeET"
+            android:id="@+id/cancelButton"
+            android:layout_centerHorizontal="true"
+            android:text="Cancel"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginHorizontal="5dp"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/courseCodeET"
+            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@id/cancelButton"
+            android:id="@+id/enrollButton"
+            android:text="Enroll"
+            android:layout_marginHorizontal="5dp"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</FrameLayout>
