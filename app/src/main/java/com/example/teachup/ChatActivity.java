@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,6 +40,8 @@ public class ChatActivity extends AppCompatActivity {
     ImageView sendBtn;
     EditText messageText;
     RecyclerView recyclerView;
+    ImageView backButton;
+    TextView toolbarTitle;
     MessageAdapter messageAdapter;
 
     @Override
@@ -49,11 +52,26 @@ public class ChatActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Remove the default app name from the toolbar.
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
+        // On press, navigate back to the previous activity.
+        backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
         userReference = FirebaseDatabase.getInstance().getReference("users");
         receiverId = getIntent().getStringExtra("id");
         receiverName = getIntent().getStringExtra("name");
 
-        getSupportActionBar().setTitle(receiverName);
+        toolbarTitle = findViewById(R.id.toolbarTitle);
+        toolbarTitle.setText(receiverName);
 
         if (receiverId != null) {
             senderRoom = FirebaseAuth.getInstance().getUid() + receiverId;
@@ -159,15 +177,13 @@ public class ChatActivity extends AppCompatActivity {
         return true;
     }
 
+    // Hide the logout menu item from the toolbar.
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        // User choose to logout.
-        if (item.getItemId() == R.id.logout) {
-            FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(ChatActivity.this, SigninActivity.class));
-            finish();
-            return true;
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem logoutItem = menu.findItem(R.id.logout);
+        if (logoutItem != null) {
+            logoutItem.setVisible(false);
         }
-        return false;
+        return super.onPrepareOptionsMenu(menu);
     }
 }

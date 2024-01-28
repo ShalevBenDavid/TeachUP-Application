@@ -7,10 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    ImageView iconGroup;
     RecyclerView recyclerView;
     UserAdapter userAdapter;
     DatabaseReference databaseReference;
@@ -33,8 +38,23 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Set a custom title for the Toolbar
-        getSupportActionBar().setTitle("Participants");
+
+        // Set up the icon click listener.
+        iconGroup = findViewById(R.id.iconGroup);
+        iconGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Handle click event to enter the group chat room.
+                Intent intent = new Intent(MainActivity.this, ChatGroupActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // Remove the default app name from the toolbar.
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
         String userName = getIntent().getStringExtra("user");
 
         userAdapter = new UserAdapter(this);
@@ -56,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                     // Verify that we got a valid user which isn't current user.
                     if (userModel != null && userModel.getUserID() != null &&
                             !userModel.getUserID().equals(FirebaseAuth.getInstance().getUid())) {
-                        // Check if the user is already in the list to avoid duplicates
+                        // Check if the user is already in the list to avoid duplicates.
                         if (!userModelList.contains(userModel)) {
                             userAdapter.add(userModel);
                         }
