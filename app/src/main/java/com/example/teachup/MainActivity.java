@@ -36,18 +36,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Set up the toolbar.
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Set up the icon click listener.
         iconGroup = findViewById(R.id.iconGroup);
-        iconGroup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Handle click event to enter the group chat room.
-                Intent intent = new Intent(MainActivity.this, ChatGroupActivity.class);
-                startActivity(intent);
-            }
+        // Handle click event to enter the group chat room.
+        iconGroup.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, ChatGroupActivity.class);
+            startActivity(intent);
         });
 
         // Remove the default app name from the toolbar.
@@ -57,18 +55,23 @@ public class MainActivity extends AppCompatActivity {
 
         String userName = getIntent().getStringExtra("user");
 
+        // Set up the RecyclerView and UserAdapter.
         userAdapter = new UserAdapter(this);
         recyclerView = findViewById(R.id.recycler);
-
         recyclerView.setAdapter(userAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // Set up the database reference to "users" in Firebase.
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
+        // Update the user list when data changes in the "users" node.
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Get the list of UserModel from the adapter.
                 List<UserModel> userModelList = userAdapter.getUserModelList();
 
+                // Iterate to retrieve user information.
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     String uId = dataSnapshot.getKey();
                     UserModel userModel = dataSnapshot.getValue(UserModel.class);
@@ -85,12 +88,8 @@ public class MainActivity extends AppCompatActivity {
                 // Update the UI (view)
                 userAdapter.notifyDataSetChanged();
             }
-
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
@@ -102,9 +101,9 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // Perform a logout and redirect to sign in activity.
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        // Perform a logout and redirect to sign in activity.
         if (item.getItemId() == R.id.logout) {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(MainActivity.this, SigninActivity.class));

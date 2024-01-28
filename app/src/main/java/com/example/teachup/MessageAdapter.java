@@ -77,7 +77,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         return messageModelList;
     }
 
-    // Returns the type of message (sent/received) in position index.
+    // Returns the type of message (sent/received) at position index.
     @Override
     public int getItemViewType(int position) {
         if (messageModelList.get(position).getSenderId().equals(FirebaseAuth.getInstance().getUid())) {
@@ -87,6 +87,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         }
     }
 
+    // ViewHolder class to hold the views for each item in the RecyclerView.
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewSentMessage, textViewReceivedMessage;
         public MyViewHolder (@NonNull View itemView) {

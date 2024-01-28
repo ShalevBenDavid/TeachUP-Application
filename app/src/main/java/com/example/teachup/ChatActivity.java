@@ -66,13 +66,16 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        // Initialize UI elements and Firebase references
         userReference = FirebaseDatabase.getInstance().getReference("users");
         receiverId = getIntent().getStringExtra("id");
         receiverName = getIntent().getStringExtra("name");
 
+        // Set the receiver's name in the toolbar
         toolbarTitle = findViewById(R.id.toolbarTitle);
         toolbarTitle.setText(receiverName);
 
+        // Define a different chat room ID for sender/receiver.
         if (receiverId != null) {
             senderRoom = FirebaseAuth.getInstance().getUid() + receiverId;
             receiverRoom = receiverId + FirebaseAuth.getInstance().getUid();;
@@ -82,15 +85,17 @@ public class ChatActivity extends AppCompatActivity {
         sendBtn = findViewById(R.id.sendMessageIcon);
         messageText = findViewById(R.id.messageEdit);
 
+        // Initialize RecyclerView and MessageAdapter.
         messageAdapter = new MessageAdapter(this);
         recyclerView = findViewById(R.id.chatRecycler);
-
         recyclerView.setAdapter(messageAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // Firebase references for sender/receiver rooms.
         senderReference = FirebaseDatabase.getInstance().getReference("chats").child(senderRoom);
         receiverReference = FirebaseDatabase.getInstance().getReference("chats").child(receiverRoom);
 
+        // Listen for changes in sender's room and update messages.
         senderReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -103,6 +108,7 @@ public class ChatActivity extends AppCompatActivity {
                 // Sort messages based on time.
                 messages.sort(Comparator.comparingLong(MessageModel::getTime));
 
+                // Clear and update the messageAdapter.
                 messageAdapter.clear();
                 for (MessageModel message : messages) {
                     messageAdapter.add(message);
@@ -111,9 +117,7 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
 
         // Clicking the send button.
@@ -128,7 +132,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        // Add a TextWatcher to the EditText
+        // Monitor the text box and update the send icon accordingly.
         messageText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
@@ -151,25 +155,28 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage(String message) {
         // Give the message a random id.
         String messageId = UUID.randomUUID().toString();
+
         // Create a message model for message and link to firebase user.
         MessageModel messageModel = new MessageModel
                 (messageId, FirebaseAuth.getInstance().getUid(), message, System.currentTimeMillis());
         // Add message model to messages list.
         messageAdapter.add(messageModel);
 
+        // Send message to both sender and receiver rooms
         senderReference.child(messageId).setValue(messageModel)
-                .addOnSuccessListener(unused -> {
-
-                })
+                .addOnSuccessListener(unused -> {})
                 .addOnFailureListener(e -> Toast.makeText(ChatActivity.this, "Failed to send message",
                         Toast.LENGTH_SHORT).show());
         receiverReference.child(messageId).setValue(messageModel);
-        // Scroll view to the last message sent.
+
+        // Scroll to the last message sent.
         recyclerView.scrollToPosition(messageAdapter.getItemCount() - 1);
-        // After sending message, set message box to blank.
+
+        // After sending message, clear the message box.
         messageText.setText("");
     }
 
+    // Create options menu in the toolbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

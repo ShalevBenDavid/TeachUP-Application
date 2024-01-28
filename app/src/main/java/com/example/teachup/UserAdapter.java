@@ -41,6 +41,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
         return new MyViewHolder(view);
     }
 
+    // Binds the user's data at position to holder.
     @Override
     public void onBindViewHolder (@NonNull UserAdapter.MyViewHolder holder, int position) {
         // Assign user's name/email to holder's name/email.
@@ -48,14 +49,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
         holder.name.setText(userModel.getUserName());
         holder.email.setText(userModel.getUserEmail());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick (View v) {
-                Intent intent = new Intent(context, ChatActivity.class);
-                intent.putExtra("id", userModel.getUserID());
-                intent.putExtra("name", userModel.getUserName());
-                context.startActivity(intent);
-            }
+        // Listen to user clicks on the item view.
+        holder.itemView.setOnClickListener(v -> {
+            // Start the ChatActivity and pass user information.
+            Intent intent = new Intent(context, ChatActivity.class);
+            intent.putExtra("id", userModel.getUserID());
+            intent.putExtra("name", userModel.getUserName());
+            context.startActivity(intent);
         });
     }
 
@@ -68,6 +68,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyViewHolder> 
         return userModelList;
     }
 
+    // ViewHolder class to hold references to the views in each row.
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView name, email;
         public MyViewHolder (@NonNull View itemView) {
