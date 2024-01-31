@@ -1,7 +1,6 @@
 package com.example.teachup;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,6 @@ import java.util.List;
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHolder> {
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
-
     private Context context;
     private List<MessageModel> messageModelList;
 
@@ -47,12 +44,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == VIEW_TYPE_SENT) {
             View view = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.message_row_sent, parent, false);
+                    inflate(R.layout.message_sent, parent, false);
             return new MyViewHolder(view);
         }
         else {
             View view = LayoutInflater.from(parent.getContext()).
-                    inflate(R.layout.message_row_received, parent, false);
+                    inflate(R.layout.message_received, parent, false);
             return new MyViewHolder(view);
         }
     }
@@ -76,6 +73,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     public List <MessageModel> getMessageModelList () {
         return messageModelList;
     }
+    public Context getContext() { return context; }
 
     // Returns the type of message (sent/received) at position index.
     @Override
@@ -90,6 +88,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     // ViewHolder class to hold the views for each item in the RecyclerView.
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewSentMessage, textViewReceivedMessage;
+
         public MyViewHolder (@NonNull View itemView) {
             super(itemView);
             textViewSentMessage = itemView.findViewById(R.id.textViewSentMessage);

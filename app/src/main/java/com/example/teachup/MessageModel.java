@@ -6,7 +6,6 @@ public class MessageModel {
     private String message;
     private long time;
 
-
     // Constructor.
     public MessageModel (String messageId, String senderId, String message, Long time) {
         this.messageId = messageId;
@@ -16,18 +15,17 @@ public class MessageModel {
     }
 
     // Empty constructor.
-    public MessageModel () {
-    }
+    public MessageModel () {}
 
     // Getters.
     public String getMessageId () { return messageId; }
-    public void setMessageId (String messageId) { this.messageId = messageId; }
     public String getSenderId () { return senderId; }
-    public long getTime() { return time; }
+    public String getMessage () { return message; }
+    public long getTime () { return time; }
 
     // Setters.
+    public void setMessageId (String messageId) { this.messageId = messageId; }
     public void setSenderId (String senderId) { this.senderId = senderId; }
-    public String getMessage () { return message; }
     public void setMessage (String message) { this.message = message; }
-    public void setTime(long time) { this.time = time; }
+    public void setTime (long time) { this.time = time; }
 }
