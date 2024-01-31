@@ -137,8 +137,8 @@ public class ChatGroupActivity extends AppCompatActivity {
     }
 
     private void sendGroupMessage(String groupMessage) {
-        // Give the message a random id
-        String groupId = UUID.randomUUID().toString();
+        // Give the message a random id.
+        String groupId = groupChatReference.document().getId();
 
         // Create a group message model and link to Firebase user.
         MessageModel groupMessageModel = new MessageModel (groupId,
