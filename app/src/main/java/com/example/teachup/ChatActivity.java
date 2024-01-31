@@ -6,33 +6,32 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class ChatActivity extends AppCompatActivity {
+    FirebaseFirestore db;
+    CollectionReference senderReference, receiverReference;
     String receiverId, receiverName, senderRoom, receiverRoom;
-    DatabaseReference senderReference, receiverReference, userReference;
+    FirebaseAuth auth;
     ImageView sendBtn;
     EditText messageText;
     RecyclerView recyclerView;
@@ -58,19 +57,21 @@ public class ChatActivity extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(view -> onBackPressed());
 
-        // Initialize UI elements and Firebase references
-        userReference = FirebaseDatabase.getInstance().getReference("users");
+        // Initialize UI elements and Firebase references.
+        db = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
         receiverId = getIntent().getStringExtra("id");
         receiverName = getIntent().getStringExtra("name");
 
-        // Set the receiver's name in the toolbar
+        // Set the receiver's name in the toolbar.
         toolbarTitle = findViewById(R.id.toolbarTitle);
         toolbarTitle.setText(receiverName);
 
         // Define a different chat room ID for sender/receiver.
         if (receiverId != null) {
-            senderRoom = FirebaseAuth.getInstance().getUid() + receiverId;
-            receiverRoom = receiverId + FirebaseAuth.getInstance().getUid();;
+            String currentUserID = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+            senderRoom = currentUserID + receiverId;
+            receiverRoom = receiverId + currentUserID;;
         }
 
         // Link send button and message text by id.
@@ -83,39 +84,49 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(messageAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Firebase references for sender/receiver rooms.
-        senderReference = FirebaseDatabase.getInstance().getReference("chats").child(senderRoom);
-        receiverReference = FirebaseDatabase.getInstance().getReference("chats").child(receiverRoom);
+        // Firestore references for sender/receiver rooms.
+        senderReference = db.collection("chats").document(senderRoom).
+                collection("messages");
+        receiverReference = db.collection("chats").document(receiverRoom).
+                collection("messages");
+
 
         // Listen for changes in sender's room and update messages.
-        senderReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        senderReference.addSnapshotListener((queryDocumentSnapshots, item) -> {
+            // Error while fetching data from "messages"" collection.
+            if (item != null) {
+                Toast.makeText(ChatActivity.this, "Error fetching messages: " +
+                        item.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Check for changes in the "messages" collection.
+            if (queryDocumentSnapshots != null) {
                 List<MessageModel> messages = new ArrayList<>();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    MessageModel messageModel = dataSnapshot.getValue(MessageModel.class);
-                    messages.add(messageModel);
+                // Process document changes.
+                for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
+                    // Convert Firestore document to messageModel object.
+                    MessageModel addedMessage = documentChange.getDocument().toObject(MessageModel.class);
+                    // Add up all the messages.
+                    messages.add(addedMessage);
                 }
 
                 // Sort messages based on time.
                 messages.sort(Comparator.comparingLong(MessageModel::getTime));
 
-                // Clear and update the messageAdapter.
-                messageAdapter.clear();
+                // Update the messageAdapter.
                 for (MessageModel message : messages) {
                     messageAdapter.add(message);
                 }
+
+                // Update the UI (view)
                 messageAdapter.notifyDataSetChanged();
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
         });
 
         // Clicking the send button.
         sendBtn.setOnClickListener(v -> {
             String message = messageText.getText().toString();
-            // If there is a message, send it. Otherwise, show error and grey out the button.
+            // If there is a message, send it. Otherwise, show error.
             if (message.trim().length() > 0) {
                 sendMessage(message);
             } else {
@@ -147,25 +158,29 @@ public class ChatActivity extends AppCompatActivity {
     private void sendMessage(String message) {
         // Give the message a random id.
         String messageId = UUID.randomUUID().toString();
-
         // Create a message model for message and link to firebase user.
         MessageModel messageModel = new MessageModel
                 (messageId, FirebaseAuth.getInstance().getUid(), message, System.currentTimeMillis());
-        // Add message model to messages list.
-        messageAdapter.add(messageModel);
 
-        // Send message to both sender and receiver rooms
-        senderReference.child(messageId).setValue(messageModel)
-                .addOnSuccessListener(unused -> {})
-                .addOnFailureListener(e -> Toast.makeText(ChatActivity.this, "Failed to send message",
-                        Toast.LENGTH_SHORT).show());
-        receiverReference.child(messageId).setValue(messageModel);
+        // Send the message to the sender's room in Firestore.
+        senderReference.document(messageId).set(messageModel)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // If sending succeeded, clear the message box.
+                        messageText.setText("");
+                    } else {
+                        // If sending failed,show an error message.
+                        Toast.makeText(ChatActivity.this,
+                                "Failed to send message", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        // Send the message to the receiver's room in Firestore.
+        receiverReference.document(messageId).set(messageModel)
+                .addOnFailureListener(e -> Toast.makeText(ChatActivity.this,
+                        "Failed to send message", Toast.LENGTH_SHORT).show());
 
         // Scroll to the last message sent.
         recyclerView.scrollToPosition(messageAdapter.getItemCount() - 1);
-
-        // After sending message, clear the message box.
-        messageText.setText("");
     }
 
     // Create options menu in the toolbar

@@ -1,38 +1,36 @@
 package com.example.teachup;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SignupActivity extends AppCompatActivity {
     EditText userName, userEmail, userPassword;
     TextView SigninBtn, SignupBtn;
     String name, email, password;
 
-    DatabaseReference databaseReference;
+    FirebaseFirestore db;
+    CollectionReference usersCollection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        db = FirebaseFirestore.getInstance();
+        usersCollection = db.collection("users");
+
         userName = findViewById(R.id.usernametext);
         userEmail = findViewById(R.id.emailtext);
         userPassword = findViewById(R.id.passwordtext);
@@ -45,18 +43,21 @@ public class SignupActivity extends AppCompatActivity {
             name = userName.getText().toString().trim();
             email = userEmail.getText().toString().trim();
             password = userPassword.getText().toString().trim();
+
             // If no name was entered, print error.
             if (TextUtils.isEmpty(name)) {
                 userEmail.setError("No Name Was Entered");
                 userEmail.requestFocus();
                 return;
             }
+
             // If no email was entered, print error.
             if (TextUtils.isEmpty(email)) {
                 userEmail.setError("No Email Was Entered");
                 userEmail.requestFocus();
                 return;
             }
+
             // If no password was entered, print error.
             if (TextUtils.isEmpty(password)) {
                 userPassword.setError("No Password Was Entered");
@@ -81,24 +82,27 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
+    // Sign Up account and update database.
     private void SignUp() {
-        // Sign Up account and update database.
-        // Sign Up failed.
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.trim(), password)
                 .addOnSuccessListener(authResult -> {
                     UserProfileChangeRequest userProfileChangeRequest =
                             new UserProfileChangeRequest.Builder().setDisplayName(name).build();
                     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                     firebaseUser.updateProfile(userProfileChangeRequest);
+
                     UserModel userModel = new UserModel
                             (FirebaseAuth.getInstance().getUid(), name, email, password);
-                    databaseReference.child(FirebaseAuth.getInstance().getUid())
-                            .setValue(userModel);
-                    Intent intent = new Intent(SignupActivity.this, MainActivity.class);
-                    intent.putExtra("name", name);
-                    startActivity(intent);
-                    finish();
-                })
+                    usersCollection.add(userModel).addOnSuccessListener(documentReference -> {
+                        Intent intent = new Intent(SignupActivity.this, MainActivity.class);
+                        intent.putExtra("name", name);
+                        startActivity(intent);
+                        finish();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(SignupActivity.this, "Error adding user to Firestore",
+                                Toast.LENGTH_SHORT).show();
+                    });
+                })  // Sign Up failed.
                 .addOnFailureListener(e -> Toast.makeText(SignupActivity.this, "SignUp failed",
                         Toast.LENGTH_SHORT).show());
     }

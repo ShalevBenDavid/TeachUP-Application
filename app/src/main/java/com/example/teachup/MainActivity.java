@@ -1,35 +1,32 @@
 package com.example.teachup;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.List;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
+    FirebaseFirestore db;
+    CollectionReference usersCollection;
     ImageView iconGroup;
     RecyclerView recyclerView;
     UserAdapter userAdapter;
-    DatabaseReference databaseReference;
+    FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,35 +58,41 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(userAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Set up the database reference to "users" in Firebase.
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        // Set the collection reference to "users".
+        db = FirebaseFirestore.getInstance();
+        usersCollection = db.collection("users");
 
-        // Update the user list when data changes in the "users" node.
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // Get the list of UserModel from the adapter.
-                List<UserModel> userModelList = userAdapter.getUserModelList();
+        // Get the current user.
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-                // Iterate to retrieve user information.
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    String uId = dataSnapshot.getKey();
-                    UserModel userModel = dataSnapshot.getValue(UserModel.class);
+        // Update the user list when data changes in the "users" collection.
+        usersCollection.addSnapshotListener((queryDocumentSnapshots, item) -> {
+            // Error while fetching data from "users"" collection.
+            if (item != null) {
+                Toast.makeText(MainActivity.this, "Error fetching data: " +
+                        item.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Check for changes in the "users" collection.
+            if (queryDocumentSnapshots != null) {
+                // Process document changes.
+                for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
+                    // Convert Firestore document to UserModel object.
+                    UserModel userModel = documentChange.getDocument().toObject(UserModel.class);
 
-                    // Verify that we got a valid user which isn't current user.
-                    if (userModel != null && userModel.getUserID() != null &&
-                            !userModel.getUserID().equals(FirebaseAuth.getInstance().getUid())) {
-                        // Check if the user is already in the list to avoid duplicates.
-                        if (!userModelList.contains(userModel)) {
+                    // Verify that we got a valid user which isn't the current user.
+                    if (userModel.getUserID() != null && !userModel.getUserID()
+                            .equals(currentUser.getUid())) {
+                        // Handle the addition of a new user.
+                        if (documentChange.getType() == DocumentChange.Type.ADDED) {
                             userAdapter.add(userModel);
                         }
                     }
                 }
+
                 // Update the UI (view)
                 userAdapter.notifyDataSetChanged();
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 

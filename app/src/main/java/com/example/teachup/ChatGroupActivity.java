@@ -11,26 +11,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class ChatGroupActivity extends AppCompatActivity {
-    DatabaseReference groupChatReference;
+    FirebaseFirestore db;
+    CollectionReference groupChatReference;
     ImageView sendBtn;
     EditText MessageText;
     RecyclerView RecyclerView;
@@ -56,8 +55,9 @@ public class ChatGroupActivity extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(view -> onBackPressed());
 
-        // Initialize UI elements and Firebase references for group chat
-        groupChatReference = FirebaseDatabase.getInstance().getReference("groupChats");
+        // Initialize UI elements and Firestore reference for group chat
+        db = FirebaseFirestore.getInstance();
+        groupChatReference = db.collection("groupChats");
 
         // Set the toolbar title to "Group Chat"
         toolbarTitle = findViewById(R.id.toolbarTitle);
@@ -73,28 +73,35 @@ public class ChatGroupActivity extends AppCompatActivity {
         RecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Listen for changes in the group chat and update messages
-        groupChatReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+        groupChatReference.addSnapshotListener((queryDocumentSnapshots, e) -> {
+            // Error while fetching data from "groupChats" collection.
+            if (e != null) {
+                Toast.makeText(ChatGroupActivity.this, "Error fetching group messages",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Check for changes in the "groupChats" collection.
+            if (queryDocumentSnapshots != null) {
                 List<MessageModel> groupMessages = new ArrayList<>();
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    MessageModel groupMessageModel = dataSnapshot.getValue(MessageModel.class);
+                // Process document changes.
+                for (DocumentChange documentChange : queryDocumentSnapshots.getDocumentChanges()) {
+                    // Convert Firestore document to messageModel object.
+                    MessageModel groupMessageModel = documentChange.getDocument().toObject(MessageModel.class);
+                    // Add up all the messages.
                     groupMessages.add(groupMessageModel);
                 }
 
-                // Sort messages based on time
+                // Sort messages based on time.
                 groupMessages.sort(Comparator.comparingLong(MessageModel::getTime));
 
-                // Clear and update the groupMessageAdapter
-                groupMessageAdapter.clear();
-                for (MessageModel groupMessage : groupMessages) {
-                    groupMessageAdapter.add(groupMessage);
+                // Update the messageAdapter.
+                for (MessageModel message : groupMessages) {
+                    groupMessageAdapter.add(message);
                 }
+
+                // Update the UI (view)
                 groupMessageAdapter.notifyDataSetChanged();
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
         });
 
         // Clicking the send group message button
@@ -133,14 +140,12 @@ public class ChatGroupActivity extends AppCompatActivity {
         // Give the message a random id
         String groupId = UUID.randomUUID().toString();
 
-        // Create a group message model and link to Firebase user
+        // Create a group message model and link to Firebase user.
         MessageModel groupMessageModel = new MessageModel (groupId,
                 FirebaseAuth.getInstance().getUid(), groupMessage, System.currentTimeMillis());
-        // Add group message model to group messages list
-        groupMessageAdapter.add(groupMessageModel);
 
-        // Send group message to the group chat reference
-        groupChatReference.child(groupId).setValue(groupMessageModel)
+        // Send group message to the group chat document.
+        groupChatReference.document(groupId).set(groupMessageModel)
                 .addOnSuccessListener(unused -> {})
                 .addOnFailureListener(e -> Toast.makeText(ChatGroupActivity.this,
                         "Failed to send group message", Toast.LENGTH_SHORT).show());

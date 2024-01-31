@@ -1,39 +1,35 @@
 package com.example.teachup;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.Firebase;
-import com.google.firebase.auth.AuthResult;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SigninActivity extends AppCompatActivity {
     EditText userEmail, userPassword;
     TextView SigninBtn, SignupBtn;
     String email, password;
 
-    DatabaseReference databaseReference;
+    FirebaseFirestore db;
+    CollectionReference usersCollection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        db = FirebaseFirestore.getInstance();
+        usersCollection = db.collection("users");
+
         userEmail = findViewById(R.id.emailtext);
         userPassword = findViewById(R.id.passwordtext);
         SigninBtn = findViewById(R.id.login);
@@ -44,12 +40,14 @@ public class SigninActivity extends AppCompatActivity {
             // Save email and password.
             email = userEmail.getText().toString().trim();
             password = userPassword.getText().toString().trim();
+
             // If no email was entered, print error.
             if (TextUtils.isEmpty(email)) {
                 userEmail.setError("No Email Was Entered");
                 userEmail.requestFocus();
                 return;
             }
+
             // If no password was entered, print error.
             if (TextUtils.isEmpty(password)) {
                 userPassword.setError("No Password Was Entered");
@@ -77,17 +75,24 @@ public class SigninActivity extends AppCompatActivity {
     }
 
     private void SignIn() {
-        // Sign In failed.
-        // Sign In succeeded.
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email.trim(), password)
                 .addOnSuccessListener(authResult -> {
-                    String username = FirebaseAuth.getInstance().getCurrentUser()
-                            .getDisplayName();
-                    Intent intent = new Intent(SigninActivity.this, MainActivity.class);
-                    intent.putExtra("name", username);
-                    startActivity(intent);
-                    finish();
-                })
+                    String userID  = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    usersCollection.document(userID).get()
+                            // Sign In succeeded.
+                            .addOnSuccessListener(documentSnapshot -> {
+                                    String username = documentSnapshot.getString("name");
+                                    Intent intent = new Intent
+                                            (SigninActivity.this, MainActivity.class);
+                                    intent.putExtra("name", username);
+                                    startActivity(intent);
+                                    finish();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(SigninActivity.this,
+                                        "Error retrieving user data", Toast.LENGTH_SHORT).show();
+                            });
+                }) // Sign In failed.
                 .addOnFailureListener(e -> {
                     // If user wasn't found in database, print error.
                     if (e instanceof FirebaseAuthInvalidUserException) {
