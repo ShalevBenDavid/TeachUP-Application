@@ -155,12 +155,15 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void sendMessage(String message) {
+    private void sendMessage (String message) {
         // Give the message a random id.
-        String messageId = UUID.randomUUID().toString();
+        String messageId = senderReference.document().getId();
+        // Get the current user ID
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+
         // Create a message model for message and link to firebase user.
-        MessageModel messageModel = new MessageModel
-                (messageId, FirebaseAuth.getInstance().getUid(), message, System.currentTimeMillis());
+        MessageModel messageModel = new MessageModel (messageId, currentUserId,
+                null, message, System.currentTimeMillis(), false);
 
         // Send the message to the sender's room in Firestore.
         senderReference.document(messageId).set(messageModel)
@@ -185,7 +188,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // Create options menu in the toolbar
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu (Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
@@ -193,7 +196,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // Hide the logout menu item from the toolbar.
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu (Menu menu) {
         MenuItem logoutItem = menu.findItem(R.id.logout);
         if (logoutItem != null) {
             logoutItem.setVisible(false);

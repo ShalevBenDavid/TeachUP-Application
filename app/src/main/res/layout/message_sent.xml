@@ -18,8 +18,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:background="@drawable/rounded_corner_sent"
-            android:padding="8dp"
-            android:fontFamily="proxima-novs"/>
+            android:padding="8dp" />
 
     </RelativeLayout>
 

@@ -16,16 +16,18 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 public class ChatGroupActivity extends AppCompatActivity {
     FirebaseFirestore db;
@@ -136,13 +138,15 @@ public class ChatGroupActivity extends AppCompatActivity {
         });
     }
 
-    private void sendGroupMessage(String groupMessage) {
+    private void sendGroupMessage (String groupMessage) {
         // Give the message a random id.
         String groupId = groupChatReference.document().getId();
+        // Get the current user ID
+        String currentUserId = FirebaseAuth.getInstance().getUid();
 
         // Create a group message model and link to Firebase user.
-        MessageModel groupMessageModel = new MessageModel (groupId,
-                FirebaseAuth.getInstance().getUid(), groupMessage, System.currentTimeMillis());
+        MessageModel groupMessageModel = new MessageModel (groupId, currentUserId,
+                null, groupMessage, System.currentTimeMillis(), true);
 
         // Send group message to the group chat document.
         groupChatReference.document(groupId).set(groupMessageModel)
@@ -159,15 +163,15 @@ public class ChatGroupActivity extends AppCompatActivity {
 
     // Create options menu in the toolbar
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu (Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
 
-    // Hide the logout menu item from the toolbar
+    // Hide the logout menu item from the toolbar.
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu (Menu menu) {
         MenuItem logoutItem = menu.findItem(R.id.logout);
         if (logoutItem != null) {
             logoutItem.setVisible(false);

@@ -50,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        String userName = getIntent().getStringExtra("user");
-
         // Set up the RecyclerView and UserAdapter.
         userAdapter = new UserAdapter(this);
         recyclerView = findViewById(R.id.recycler);

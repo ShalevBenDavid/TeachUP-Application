@@ -81,10 +81,10 @@ public class SigninActivity extends AppCompatActivity {
                     usersCollection.document(userID).get()
                             // Sign In succeeded.
                             .addOnSuccessListener(documentSnapshot -> {
-                                    String username = documentSnapshot.getString("name");
+                                    String username = documentSnapshot.getString("userName");
                                     Intent intent = new Intent
                                             (SigninActivity.this, MainActivity.class);
-                                    intent.putExtra("name", username);
+                                    intent.putExtra("username", username);
                                     startActivity(intent);
                                     finish();
                             })

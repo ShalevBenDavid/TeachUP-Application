@@ -5,38 +5,31 @@
     android:layout_height="wrap_content"
     android:gravity="start">
 
-    <TextView
-        android:id="@+id/senderName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sender's Name"
-        android:textColor="@color/black" />
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:layout_margin="1dp">
 
-        <ImageView
-            android:id="@+id/senderIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/person_icon"
-            android:layout_marginEnd="8dp"/>
+        <TextView
+            android:id="@+id/senderName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_marginStart="10dp"/>
 
         <TextView
             android:id="@+id/textViewReceivedMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:layout_below="@id/senderName"
             android:background="@drawable/rounded_corner_received"
+            android:textSize="20sp"
             android:padding="8dp"
-            android:fontFamily="proxima-novs"
-            android:layout_toEndOf="@+id/senderIcon"/>
+            android:layout_margin="5dp" />
+
 
     </RelativeLayout>
 

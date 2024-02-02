@@ -16,7 +16,9 @@ import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHolder> {
     private static final int VIEW_TYPE_SENT = 1;
-    private static final int VIEW_TYPE_RECEIVED = 2;
+    private static final int VIEW_TYPE_RECEIVED_GROUP = 2;
+    private static final int VIEW_TYPE_RECEIVED = 3;
+
     private Context context;
     private List<MessageModel> messageModelList;
 
@@ -37,7 +39,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
         notifyDataSetChanged();
     }
 
-    // Change view type according to message (sent/received).
+    // Change view type according to message (sent/received group/received).
     @NonNull
     @Override
     public MessageAdapter.MyViewHolder onCreateViewHolder (@NonNull ViewGroup parent, int viewType) {
@@ -47,7 +49,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
                     inflate(R.layout.message_sent, parent, false);
             return new MyViewHolder(view);
         }
-        else {
+        if (viewType == VIEW_TYPE_RECEIVED_GROUP) {
+            View view = LayoutInflater.from(parent.getContext()).
+                    inflate(R.layout.group_message_received, parent, false);
+            return new MyViewHolder(view);
+        } else {
             View view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.message_received, parent, false);
             return new MyViewHolder(view);
@@ -56,12 +62,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder (@NonNull MessageAdapter.MyViewHolder holder, int position) {
-        // Assign sent/received message to holder's sent/received message.
         MessageModel messageModel = messageModelList.get(position);
+        // Assign sent/received message to holder's sent/received message.
         if (messageModel.getSenderId().equals((FirebaseAuth.getInstance().getUid()))) {
-            holder.textViewSentMessage.setText(messageModel.getMessage());
+            holder.bindSentMessage(messageModel);
         } else {
-            holder.textViewReceivedMessage.setText(messageModel.getMessage());
+            holder.bindReceivedMessage(messageModel);
         }
     }
 
@@ -75,24 +81,44 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyViewHo
     }
     public Context getContext() { return context; }
 
-    // Returns the type of message (sent/received) at position index.
+    // Returns the type of message (sent/received group/received) at position index.
     @Override
     public int getItemViewType(int position) {
-        if (messageModelList.get(position).getSenderId().equals(FirebaseAuth.getInstance().getUid())) {
+        MessageModel messageModel = messageModelList.get(position);
+        if (messageModel.getSenderId().equals(FirebaseAuth.getInstance().getUid())) {
             return VIEW_TYPE_SENT;
         } else {
-            return VIEW_TYPE_RECEIVED;
+            if (messageModel.isGroupMessage()) {
+                return VIEW_TYPE_RECEIVED_GROUP;
+            } else {
+                return VIEW_TYPE_RECEIVED;
+            }
         }
     }
 
     // ViewHolder class to hold the views for each item in the RecyclerView.
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewSentMessage, textViewReceivedMessage;
+        private TextView senderNameReceived;
 
         public MyViewHolder (@NonNull View itemView) {
             super(itemView);
             textViewSentMessage = itemView.findViewById(R.id.textViewSentMessage);
             textViewReceivedMessage = itemView.findViewById(R.id.textViewReceivedMessage);
+            senderNameReceived = itemView.findViewById(R.id.senderName);
+        }
+
+        // Bind data for received messages.
+        public void bindReceivedMessage (MessageModel message) {
+            if (message.isGroupMessage()) {
+                senderNameReceived.setText(message.getSenderName());
+            }
+            textViewReceivedMessage.setText(message.getMessage());
+        }
+
+        // Bind data for sent messages.
+        public void bindSentMessage (MessageModel message) {
+            textViewSentMessage.setText(message.getMessage());
         }
     }
 }
