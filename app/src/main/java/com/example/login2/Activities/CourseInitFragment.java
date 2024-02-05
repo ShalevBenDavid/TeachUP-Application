@@ -1,4 +1,4 @@
-package com.example.login2;
+package com.example.login2.Activities;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -22,6 +22,7 @@ import android.widget.ImageView;
 
 import com.example.login2.Models.CourseModel;
 import com.example.login2.Models.UserModel;
+import com.example.login2.R;
 import com.example.login2.Repositories.CourseRepository;
 import com.example.login2.Repositories.StorageRepository;
 import com.example.login2.Utils.CustomProgressDialog;

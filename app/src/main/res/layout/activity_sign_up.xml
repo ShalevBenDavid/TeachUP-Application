@@ -1,0 +1,114 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg2"
+    tools:context=".Activities.SignUpActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:src="@drawable/logo2" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@color/white"
+        app:cardCornerRadius="20dp"
+        app:strokeColor="@color/bg_color"
+        app:strokeWidth="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:drawableLeft="@drawable/user_name_vector"
+                android:drawableTint="@color/bg_color"
+                android:background="@drawable/edittext_bg"
+                android:layout_marginStart="60dp"
+                android:layout_marginEnd="60dp"
+                android:layout_marginTop="20dp"
+                android:padding="10dp"
+                android:hint="Name"
+                android:drawablePadding="10dp"
+                android:id="@+id/name"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:drawableLeft="@drawable/baseline_email_24"
+                android:drawableTint="@color/bg_color"
+                android:background="@drawable/edittext_bg"
+                android:layout_marginStart="60dp"
+                android:layout_marginEnd="60dp"
+                android:layout_marginTop="20dp"
+                android:padding="10dp"
+                android:hint="Email"
+                android:drawablePadding="10dp"
+                android:id="@+id/email"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:drawableLeft="@drawable/baseline_password_24"
+                android:drawableTint="@color/bg_color"
+                android:background="@drawable/edittext_bg"
+                android:layout_marginStart="60dp"
+                android:layout_marginEnd="60dp"
+                android:layout_marginTop="20dp"
+                android:padding="10dp"
+                android:inputType="textPassword"
+                android:hint="Password"
+                android:drawablePadding="10dp"
+                android:id="@+id/password"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:drawableLeft="@drawable/baseline_password_24"
+                android:drawableTint="@color/bg_color"
+                android:background="@drawable/edittext_bg"
+                android:layout_marginStart="60dp"
+                android:layout_marginEnd="60dp"
+                android:layout_marginTop="20dp"
+                android:padding="10dp"
+                android:inputType="textPassword"
+                android:hint="Confirm Password"
+                android:drawablePadding="10dp"
+                android:id="@+id/confirmPassword"/>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="60dp"
+                android:layout_marginEnd="60dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="15dp"
+                android:text="SIGN UP"
+                android:id="@+id/signupButton"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                app:cornerRadius="30dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Already A Member? Sign in"
+                android:textStyle="bold"
+                android:id="@+id/signin"
+                android:layout_marginBottom="20dp"/>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

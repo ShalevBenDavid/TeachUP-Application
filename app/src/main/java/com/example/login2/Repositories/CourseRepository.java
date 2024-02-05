@@ -47,13 +47,12 @@ public class CourseRepository {
     }
 
     public Query getAllCoursesTaughtBy(String userId){
-
         return db.collection("courses").
                 whereEqualTo("courseTeacherId",userId);
     }
 
     public void addCourse(CourseModel newCourse) {
-        DocumentReference reference = db.collection("courses").document();
+        DocumentReference reference = db.collection(Constants.COURSE_COLLECTION).document();
 
         newCourse.setCourseId(reference.getId());
 

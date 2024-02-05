@@ -1,6 +1,8 @@
 package com.example.login2.Adapters;
 
+import android.app.DownloadManager;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,15 +11,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.login2.Models.StudyMaterialModel;
 import com.example.login2.R;
+import com.example.login2.Utils.CustomUtils;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 public class StudyMaterialAdapter extends FirestoreRecyclerAdapter<StudyMaterialModel, StudyMaterialAdapter.StudyMaterialViewHolder> {
-private Context context;
+    private Context context;
 
     public StudyMaterialAdapter(@NonNull FirestoreRecyclerOptions<StudyMaterialModel> options, Context context) {
         super(options);
@@ -27,6 +31,11 @@ private Context context;
     @Override
     protected void onBindViewHolder(@NonNull StudyMaterialViewHolder holder, int position, @NonNull StudyMaterialModel model) {
         holder.bindStudyMaterial(model);
+        holder.itemView.setOnClickListener(v -> {
+            CustomUtils.showToast(context, "Download Started");
+            startDownload(model.getFileUrl(), model.getTitle(), context);
+        });
+
     }
 
     @NonNull
@@ -35,6 +44,19 @@ private Context context;
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.material_recycle_item,parent,false);
         return new StudyMaterialViewHolder(view);
     }
+
+    private void startDownload(String fileUrl, String title, Context context) {
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(fileUrl))
+                .setTitle(title)
+                .setDescription("Downloading " + title)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .setAllowedOverMetered(true)
+                .setAllowedOverRoaming(true);
+
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        downloadManager.enqueue(request);
+    }
+
 
     public static class StudyMaterialViewHolder extends RecyclerView.ViewHolder {
         private ImageView fileType;

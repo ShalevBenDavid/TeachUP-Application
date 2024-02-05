@@ -1,6 +1,5 @@
-package com.example.login2;
+package com.example.login2.Activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -8,35 +7,30 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.login2.Models.UserModel;
+import com.example.login2.R;
 import com.example.login2.Repositories.FirebaseAuthRepository;
 import com.example.login2.Utils.Constants;
-import com.example.login2.Utils.CustomProgressDialog;
-import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
+import com.example.login2.databinding.ActivityWelcomeBinding;
 import com.google.android.material.card.MaterialCardView;
-import com.google.firebase.auth.FirebaseAuth;
-
-import org.checkerframework.checker.units.qual.C;
 
 public class WelcomeActivity extends AppCompatActivity {
-    private MaterialCardView studentCard;
-    private MaterialCardView teacherCard;
-    private Button continueButton;
+    private ActivityWelcomeBinding binding;
     private FirebaseAuthRepository auth;
     private String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
+        binding = ActivityWelcomeBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
-        studentCard = findViewById(R.id.student);
-        teacherCard = findViewById(R.id.teacher);
-        continueButton = findViewById(R.id.continue_button);
+
         auth = new FirebaseAuthRepository();
         if(auth.getCurrentUser() != null){
             setCurrentUser();
@@ -73,9 +67,9 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void setupContinueButton() {
-        continueButton.setOnClickListener((v)->{
+        binding.continueButton.setOnClickListener((v)->{
             if(type != null){
-                Intent intent = new Intent(WelcomeActivity.this,SignActivity.class);
+                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
                 intent.putExtra("type",type);
                 startActivity(intent);
                 finish();
@@ -86,13 +80,13 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     private void setupUserCards() {
-        studentCard.setOnClickListener((v -> {
-            highlightCard(studentCard,teacherCard);
+        binding.student.setOnClickListener((v -> {
+            highlightCard(binding.student,binding.teacher);
             type = "student";
         }));
 
-        teacherCard.setOnClickListener((v)->{
-            highlightCard(teacherCard,studentCard);
+        binding.teacher.setOnClickListener((v)->{
+            highlightCard(binding.teacher,binding.student);
             type = "teacher";
         });
     }

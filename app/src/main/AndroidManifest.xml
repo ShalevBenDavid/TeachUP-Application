@@ -16,16 +16,25 @@
         android:theme="@style/Theme.Login2"
         tools:targetApi="31">
         <activity
-            android:name=".StudyMaterialActivity"
+            android:name=".Activities.GroupChatActivity"
             android:exported="false" />
         <activity
-            android:name=".CourseActivity"
+            android:name=".Activities.SignUpActivity"
             android:exported="false" />
         <activity
-            android:name=".CourseListActivity"
+            android:name=".Activities.MainChatActivity"
             android:exported="false" />
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".Activities.StudyMaterialActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.CourseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.CourseListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignActivity"
+            android:name=".Activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
