@@ -5,4 +5,13 @@
     <color name="bg_color">#0151A7</color>
     <color name="gray">#777777</color>
     <color name="fab_color">#B48BFD</color>
+    <color name="Primary">#128c7e</color>
+    <color name="PrimaryDark">#075e54</color>
+    <color name="PrimaryAccent">#25d366</color>
+    <color name="PrimaryVarient">#ece5dd</color>
+    <color name="PrimaryGray">#cedbe0</color>
+    <color name="PrimaryBlue">#19629b</color>
+    <color name="LightBlue">#bcd1dc</color>
+    <color name="LightBlue2">#7ab5cf</color>
+
 </resources>

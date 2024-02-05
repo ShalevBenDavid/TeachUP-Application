@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.login2.CourseActivity;
+import com.example.login2.Activities.CourseActivity;
 import com.example.login2.Models.CourseModel;
 import com.example.login2.R;
 import com.example.login2.Utils.CourseManager;

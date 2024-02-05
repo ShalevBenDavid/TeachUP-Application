@@ -1,4 +1,4 @@
-package com.example.login2;
+package com.example.login2.Activities;
 
 import android.os.Bundle;
 
@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.login2.Models.UserModel;
+import com.example.login2.R;
 import com.example.login2.Repositories.FirebaseAuthRepository;
 import com.example.login2.Repositories.UserRepository;
 import com.example.login2.Utils.CustomProgressDialog;
@@ -116,7 +117,7 @@ public class SignupTab extends Fragment {
             @Override
             public void onSuccess(UserModel user) {
                 CustomUtils.showToast(getContext(),"Registered Successfully");
-                ((SignActivity) requireActivity()).viewPager2.setCurrentItem(0);
+//                ((SignActivity) requireActivity()).viewPager2.setCurrentItem(0);
                 progressDialog.dismiss();
             }
 

@@ -1,4 +1,4 @@
-package com.example.login2;
+package com.example.login2.Activities;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
 import android.text.TextUtils;
@@ -17,12 +16,14 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.example.login2.Models.CourseModel;
+import com.example.login2.Models.UserModel;
 import com.example.login2.Repositories.CourseRepository;
 import com.example.login2.Repositories.EnrollmentsRepository;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
 import com.example.login2.databinding.FragmentInputCourseCodeBinding;
+
+import java.util.List;
 
 
 public class InputCourseCodeFragment extends DialogFragment {
@@ -72,10 +73,10 @@ public class InputCourseCodeFragment extends DialogFragment {
                 EnrollmentsRepository repository = new EnrollmentsRepository();
                 repository.enrollStudent(code, UserManager.getInstance().getUserId(), new EnrollmentsRepository.EnrollmentCallback() {
                     @Override
-                    public void onSuccess(String courseId) {
+                    public void onSuccess(List<UserModel> students) {
                         CourseRepository courseRepository = new CourseRepository();
                         courseRepository.getCourse(code).addOnSuccessListener(courseModel->{
-                            ((CourseListActivity) requireContext()).studentCourseAdapter.addCourse(courseModel);
+                            ((CourseListActivity) requireContext()).getStudentCourseAdapter().addCourse(courseModel);
                             new Handler().postDelayed(()-> {CustomUtils.showToast(requireContext(),"Enrolled Successfully"); dismiss();},500);
                         });
                     }

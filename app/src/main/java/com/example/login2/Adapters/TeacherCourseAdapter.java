@@ -5,14 +5,11 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.login2.CourseActivity;
+import com.example.login2.Activities.CourseActivity;
 import com.example.login2.Models.CourseModel;
 import com.example.login2.R;
 import com.example.login2.Utils.CourseManager;
@@ -21,10 +18,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 public class TeacherCourseAdapter extends FirestoreRecyclerAdapter<CourseModel, CourseViewHolder> {
     private Context context;
-    private String userType;
     public TeacherCourseAdapter(@NonNull FirestoreRecyclerOptions<CourseModel> options,
-                                Context context,
-                                String userType) {
+                                Context context) {
         super(options);
         this.context= context;
     }

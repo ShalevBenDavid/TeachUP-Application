@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ChatGroupActivity"
+    tools:context=".Activities.ChatGroupActivity"
     android:background="@drawable/gradient_background_chat">
 
     <androidx.appcompat.widget.Toolbar
@@ -14,25 +14,26 @@
         android:background="@color/PrimaryBlue"
         app:titleTextColor="@color/white">
 
-    <ImageView
-        android:id="@+id/backButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="start"
-        android:layout_marginStart="16dp"
-        android:src="@drawable/back_icon" />
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/back_icon" />
 
-    <TextView
-        android:id="@+id/toolbarTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:textSize="25sp"
-        android:fontFamily="sans-serif-condensed"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="100dp"
-        android:layout_toRightOf="@id/backButton"
-        />
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:text="@string/group_chat"
+            android:fontFamily="sans-serif-condensed"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="100dp"
+            android:layout_toRightOf="@id/backButton"
+            />
 
     </androidx.appcompat.widget.Toolbar>
 

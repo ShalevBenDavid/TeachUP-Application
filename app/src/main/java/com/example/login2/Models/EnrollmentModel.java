@@ -21,7 +21,6 @@ public class EnrollmentModel {
         this.enrolledSince = CustomUtils.getLocalDateTime();
     }
 
-
     public String getStudentId() {
         return studentId;
     }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg2"
-    tools:context=".SignActivity">
+    tools:context=".Activities.LoginActivity">
 
     <ImageView
         android:layout_width="match_parent"
