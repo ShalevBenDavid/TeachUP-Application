@@ -53,6 +53,13 @@ public class UserManager {
         return type;
     }
 
+    public String getUserName(){
+        return currentUser.getUserName();
+    }
+
+    public String getUserDescription(){
+        return currentUser.getUserDescription();
+    }
     public String getUserId(){
         return currentUser.getUserId();
     }

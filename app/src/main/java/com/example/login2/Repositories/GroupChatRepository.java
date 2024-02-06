@@ -1,10 +1,13 @@
 package com.example.login2.Repositories;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.login2.Models.MessageModel;
 import com.example.login2.Utils.Constants;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -19,26 +22,32 @@ public class GroupChatRepository {
         db = FirebaseFirestore.getInstance();
     }
 
-    public Query getGroupChatMessages(String courseId){
-        Query groupChatQuery = db.collection(Constants.GROUP_CHAT_REPOSITORY)
-                .whereEqualTo("courseId", courseId);
-
-        List<DocumentSnapshot> chatDocument = groupChatQuery.get().getResult().getDocuments();
-
+    public Query getGroupChatMessages(String chatId){
+        Log.e("chatId",chatId);
         return db.collection(Constants.GROUP_CHAT_REPOSITORY)
-                .document(chatDocument.get(0).getId())
+                .document(chatId)
                 .collection("messages")
-                .orderBy("time", Query.Direction.DESCENDING);
-
+                .orderBy("time", Query.Direction.ASCENDING);
     }
 
-    public String getGroupChatId(String courseId){
-        Query groupChatQuery = db.collection(Constants.GROUP_CHAT_REPOSITORY)
-                .whereEqualTo("courseId", courseId).get().addOnSuccessListener()
 
-                return
+
+    public void sendMessage(MessageModel messageModel,String groupChatId, groupChatCallback callback){
+
+        DocumentReference documentReference = db.collection(Constants.GROUP_CHAT_REPOSITORY)
+                .document(groupChatId).collection("messages").document();
+
+        messageModel.setMessageId(documentReference.getId());
+
+        documentReference.set(messageModel).addOnSuccessListener(aVoid ->{
+            callback.onSuccess();
+        }).addOnFailureListener(e ->{
+            callback.onFailure(e.getMessage());
+        });
     }
-    public LiveData<List<MessageModel>> getChatMessages(String courseId) {
+
+
+/*    public LiveData<List<MessageModel>> getChatMessages(String courseId) {
         MutableLiveData<List<MessageModel>> messages = new MutableLiveData<>();
         List<MessageModel> helperList = new ArrayList<>();
 
@@ -74,9 +83,10 @@ public class GroupChatRepository {
         });
 
         return messages;
-    }
+    }*/
 
-    public interface GroupChatCallback(){
-        
+    public interface groupChatCallback{
+        void onSuccess();
+        void onFailure(String message);
     }
 }

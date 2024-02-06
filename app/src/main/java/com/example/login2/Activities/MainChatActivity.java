@@ -52,7 +52,7 @@ public class MainChatActivity extends AppCompatActivity {
         // Set up the icon click listener.
         // Handle click event to enter the group chat room.
         binding.iconGroup.setOnClickListener(v -> {
-            startActivity(new Intent(MainChatActivity.this, MainChatActivity.class));
+            startActivity(new Intent(MainChatActivity.this, GroupChatActivity.class));
         });
 
         // Remove the default app name from the toolbar.

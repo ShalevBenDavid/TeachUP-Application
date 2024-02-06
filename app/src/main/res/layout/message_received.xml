@@ -18,7 +18,19 @@
             android:textColor="@color/black"
             android:textSize="20sp"
             android:background="@drawable/rounded_corner_received"
-            android:padding="8dp" />
+            android:padding="12dp" />
+
+        <TextView
+            android:id="@+id/messageTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/textViewReceivedMessage"
+            android:layout_alignBottom="@id/textViewReceivedMessage"
+            android:layout_marginHorizontal="8dp"
+            android:padding="3dp"
+            android:textSize="10dp"
+            android:textColor="@color/common_google_signin_btn_text_light"
+            />
 
     </RelativeLayout>
 

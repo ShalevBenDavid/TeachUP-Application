@@ -1,12 +1,13 @@
 package com.example.login2.Models;
 
-import com.google.firebase.firestore.DocumentId;
 
 public class UserModel {
 
     private String userId;
     private String userEmail;
     private String userName;
+    private String userDescription;
+    private String profilePicUrl;
 
     public UserModel() {
     }
@@ -41,5 +42,12 @@ public class UserModel {
     }
 
 
+    public String getUserDescription() {
+        return userDescription;
+    }
+
+    public void setUserDescription(String userDescription) {
+        this.userDescription = userDescription;
+    }
 
 }
