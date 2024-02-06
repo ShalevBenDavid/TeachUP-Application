@@ -15,5 +15,5 @@ public final class Constants {
     public static final String IMAGE_FILE = "image";
     public static final String VIDEO_FILE = "video";
     public static final String UNKNOWN_FILE_TYPE = "unknown";
-    public static final String GROUP_CHAT_REPOSITORY = "groupChats";
+    public static final String GROUP_CHAT_REPOSITORY = "chats";
 }

@@ -9,16 +9,15 @@ public class EnrollmentModel {
     private String studentId;
     private String courseId;
     private boolean isActive;
-    private String enrolledSince;
+    private String enrollmentDate;
 
-    public EnrollmentModel() {
-    }
+    public EnrollmentModel() {}
 
     public EnrollmentModel(String courseId, String studentId, boolean isActive) {
         this.studentId = studentId;
         this.courseId = courseId;
         this.isActive = isActive;
-        this.enrolledSince = CustomUtils.getLocalDateTime();
+        this.enrollmentDate = CustomUtils.getLocalDate();
     }
 
     public String getStudentId() {
@@ -26,11 +25,11 @@ public class EnrollmentModel {
     }
 
     public String getEnrolledSince() {
-        return enrolledSince;
+        return enrollmentDate;
     }
 
     public void setEnrolledSince(String enrolledSince) {
-        this.enrolledSince = enrolledSince;
+        this.enrollmentDate = enrolledSince;
     }
 
     public void setStudentId(String studentId) {

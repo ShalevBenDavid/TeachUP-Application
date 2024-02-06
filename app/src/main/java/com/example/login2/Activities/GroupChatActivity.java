@@ -11,19 +11,20 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.login2.Adapters.MessageAdapter;
+import com.example.login2.Models.CourseModel;
 import com.example.login2.Models.MessageModel;
 import com.example.login2.R;
 import com.example.login2.Repositories.GroupChatRepository;
 import com.example.login2.Utils.CourseManager;
+import com.example.login2.Utils.CustomUtils;
+import com.example.login2.Utils.UserManager;
 import com.example.login2.databinding.ActivityGroupChatBinding;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.auth.FirebaseAuth;
 
 
-public class ChatGroupActivity extends AppCompatActivity {
+public class GroupChatActivity extends AppCompatActivity {
     private ActivityGroupChatBinding binding;
     private MessageAdapter groupMessageAdapter;
     private GroupChatRepository repository;
@@ -47,7 +48,7 @@ public class ChatGroupActivity extends AppCompatActivity {
 
         repository = new GroupChatRepository();
         FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
-                .setQuery(repository.getGroupChatMessages(CourseManager.getInstance().getCurrentCourse().getCourseId()),MessageModel.class).build();
+                .setQuery(repository.getGroupChatMessages(getGroupChatId()),MessageModel.class).build();
         groupMessageAdapter = new MessageAdapter(options,this);
         binding.groupChatRecycler.setAdapter(groupMessageAdapter);
         binding.groupChatRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -59,7 +60,7 @@ public class ChatGroupActivity extends AppCompatActivity {
             if (groupMessage.trim().length() > 0) {
                 sendGroupMessage(groupMessage);
             } else {
-                Toast.makeText(ChatGroupActivity.this, "Message can't be empty",
+                Toast.makeText(GroupChatActivity.this, "Message can't be empty",
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -85,28 +86,36 @@ public class ChatGroupActivity extends AppCompatActivity {
     }
 
     private void sendGroupMessage (String groupMessage) {
-        // Give the message a random id.
-        String groupId = groupChatReference.document().getId();
-        // Get the current user ID
-        String currentUserId = FirebaseAuth.getInstance().getUid();
-
         // Create a group message model and link to Firebase user.
-        MessageModel groupMessageModel = new MessageModel (groupId, currentUserId,
-                null, groupMessage, true);
+        MessageModel groupMessageModel = createMessageModel(groupMessage);
+        String groupChatId = getGroupChatId();
 
         // Send group message to the group chat document.
-        groupChatReference.document(groupId).set(groupMessageModel)
-                .addOnSuccessListener(unused -> {})
-                .addOnFailureListener(e -> Toast.makeText(ChatGroupActivity.this,
-                        "Failed to send group message", Toast.LENGTH_SHORT).show());
+        repository.sendMessage(groupMessageModel,
+                groupChatId,
+                new GroupChatRepository.groupChatCallback() {
+            @Override
+            public void onSuccess() {
+                binding.groupChatRecycler.scrollToPosition(groupMessageAdapter.getItemCount() - 1);
+
+                // After sending group message, clear the group message box
+                binding.groupMessageEdit.setText("");
+            }
+
+            @Override
+            public void onFailure(String error) {
+                CustomUtils.showToast(GroupChatActivity.this,error);
+            }
+        });
 
         // Scroll to the last group message sent
-        RecyclerView.scrollToPosition(groupMessageAdapter.getItemCount() - 1);
 
-        // After sending group message, clear the group message box
-        MessageText.setText("");
     }
 
+    private String getGroupChatId(){
+        CourseModel courseModel = CourseManager.getInstance().getCurrentCourse();
+        return courseModel.getCourseId()+courseModel.getCourseTeacherId();
+    }
     // Create options menu in the toolbar
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
@@ -124,4 +133,27 @@ public class ChatGroupActivity extends AppCompatActivity {
         }
         return super.onPrepareOptionsMenu(menu);
     }
+
+    private MessageModel createMessageModel(String message){
+        return new MessageModel(UserManager.getInstance().getUserId(),
+                UserManager.getInstance().getUserName(),message,
+                true);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(groupMessageAdapter != null) {
+            groupMessageAdapter.startListening();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(groupMessageAdapter != null) {
+            groupMessageAdapter.stopListening();
+        }
+    }
+
 }

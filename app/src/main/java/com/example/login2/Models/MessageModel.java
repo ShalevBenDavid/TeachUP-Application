@@ -1,22 +1,25 @@
 package com.example.login2.Models;
 
-import com.google.type.DateTime;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import com.google.firebase.Timestamp;
+
 
 public class MessageModel {
     private String messageId;
     private String senderId;
     private String senderName;
     private String message;
-    private LocalDateTime time;
-    private boolean isGroupMessage;
+    private Timestamp time;
 
+
+
+    private boolean isGroupMessage;
     // Constructor.
-    public MessageModel (String messageId, String senderId, String senderName, String message, boolean isGroupMessage) {
-        this.messageId = messageId;
+    public MessageModel (String senderId, String senderName, String message, boolean isGroupMessage) {
         this.senderId = senderId;
         this.senderName = senderName;
         this.message = message;
@@ -32,11 +35,15 @@ public class MessageModel {
     public String getSenderId () { return senderId; }
     public String getSenderName () { return senderName; }
     public String getMessage () { return message; }
-    public String getTime () {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        return time.format(formatter);
+    public Timestamp getTime(){
+        return time;
     }
-    public boolean isGroupMessage () { return isGroupMessage; }
+    public String getFormatedTime () {
+        Date currentDate = time.toDate();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return sdf.format(currentDate);
+    }
 
     // Setters.
     public void setMessageId (String messageId) { this.messageId = messageId; }
@@ -44,7 +51,14 @@ public class MessageModel {
     public void setSenderName (String senderName) { this.senderName = senderName; }
     public void setMessage (String message) { this.message = message; }
     private void setTime () {
-        this.time = LocalDateTime.now();
+        this.time = Timestamp.now();
     }
-    public void setGroupMessage (boolean groupMessage) { isGroupMessage = groupMessage; }
+
+    public boolean isGroupMessage() {
+        return isGroupMessage;
+    }
+
+    public void setGroupMessage(boolean groupMessage) {
+        isGroupMessage = groupMessage;
+    }
 }

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -52,6 +53,12 @@ public class CustomUtils {
     public static String getLocalDateTime() {
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
+        return formatter.format(dateTime);
+    }
+
+    public static String getLocalDate(){
+        LocalDate dateTime = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
         return formatter.format(dateTime);
     }
 }

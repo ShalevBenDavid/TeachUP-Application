@@ -1,0 +1,72 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bg2"
+    tools:context=".Activities.ProfileActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/PrimaryBlue">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/back_icon" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:background="@drawable/circle_profile_shape"
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/profile_image_default"
+        android:id="@+id/profileImage"/>
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/editImage"
+        android:src="@drawable/edit_image_icon"
+        android:layout_toEndOf="@id/profileImage"
+        android:layout_alignTop="@id/profileImage"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/userName"
+        android:text="John Doe"
+        android:textColor="@color/black"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:layout_below="@id/profileImage"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/descriptionBox"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/description_box"
+        android:layout_below="@id/userName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:text="jknjk \n\n\n"
+        android:textSize="20dp"
+        android:padding="10dp"
+        />
+
+    <ImageView
+        android:id="@+id/edit_text_button"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/edit_decription_icon"
+        android:layout_toEndOf="@id/descriptionBox"
+        android:layout_alignBottom="@id/descriptionBox" />
+</RelativeLayout>
