@@ -61,7 +61,7 @@ public class MainChatActivity extends AppCompatActivity {
         }
 
         // Set up the RecyclerView and UserAdapter.
-        studentsAdapter = new StudentListAdapter();
+        studentsAdapter = new StudentListAdapter(MainChatActivity.this);
         StudentListViewModel studentListViewModel = new ViewModelProvider(this).get(StudentListViewModel.class);
         binding.recycler.setLayoutManager(new LinearLayoutManager(this));
         binding.recycler.setAdapter(studentsAdapter);

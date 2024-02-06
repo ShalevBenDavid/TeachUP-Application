@@ -16,7 +16,7 @@ import com.example.login2.Adapters.MessageAdapter;
 import com.example.login2.Models.CourseModel;
 import com.example.login2.Models.MessageModel;
 import com.example.login2.R;
-import com.example.login2.Repositories.GroupChatRepository;
+import com.example.login2.Repositories.ChatRepository;
 import com.example.login2.Utils.CourseManager;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
@@ -27,7 +27,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 public class GroupChatActivity extends AppCompatActivity {
     private ActivityGroupChatBinding binding;
     private MessageAdapter groupMessageAdapter;
-    private GroupChatRepository repository;
+    private ChatRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +46,9 @@ public class GroupChatActivity extends AppCompatActivity {
         // On press, navigate back to the previous activity.
         binding.backButton.setOnClickListener(v -> onBackPressed());
 
-        repository = new GroupChatRepository();
+        repository = new ChatRepository();
         FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
-                .setQuery(repository.getGroupChatMessages(getGroupChatId()),MessageModel.class).build();
+                .setQuery(repository.getChatMessages(getGroupChatId()),MessageModel.class).build();
         groupMessageAdapter = new MessageAdapter(options,this);
         binding.groupChatRecycler.setAdapter(groupMessageAdapter);
         binding.groupChatRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -93,7 +93,7 @@ public class GroupChatActivity extends AppCompatActivity {
         // Send group message to the group chat document.
         repository.sendMessage(groupMessageModel,
                 groupChatId,
-                new GroupChatRepository.groupChatCallback() {
+                new ChatRepository.groupChatCallback() {
             @Override
             public void onSuccess() {
                 binding.groupChatRecycler.scrollToPosition(groupMessageAdapter.getItemCount() - 1);
@@ -107,9 +107,6 @@ public class GroupChatActivity extends AppCompatActivity {
                 CustomUtils.showToast(GroupChatActivity.this,error);
             }
         });
-
-        // Scroll to the last group message sent
-
     }
 
     private String getGroupChatId(){
