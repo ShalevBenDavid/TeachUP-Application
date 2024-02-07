@@ -46,12 +46,9 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         // On press, navigate back to the previous activity.
-        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                Intent intent = new Intent(ChatActivity.this, MainChatActivity.class);
-                startActivity(intent);
-            }
+        binding.backButton.setOnClickListener(view -> {
+            Intent intent = new Intent(ChatActivity.this, MainChatActivity.class);
+            startActivity(intent);
         });
 
         // Initialize UI elements and Firebase references.
