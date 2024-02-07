@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TeachUp"
+rootProject.name = "login2"
 include(":app")
  
