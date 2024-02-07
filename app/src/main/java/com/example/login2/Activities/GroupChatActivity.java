@@ -1,5 +1,6 @@
 package com.example.login2.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -44,8 +46,13 @@ public class GroupChatActivity extends AppCompatActivity {
         }
 
         // On press, navigate back to the previous activity.
-        binding.backButton.setOnClickListener(v -> onBackPressed());
-
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Intent intent = new Intent(GroupChatActivity.this, MainChatActivity.class);
+                startActivity(intent);
+            }
+        });
         repository = new ChatRepository();
         FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
                 .setQuery(repository.getChatMessages(getGroupChatId()),MessageModel.class).build();
