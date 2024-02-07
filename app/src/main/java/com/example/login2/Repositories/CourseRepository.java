@@ -14,6 +14,7 @@ import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CourseRepository {
     private final FirebaseFirestore db;
@@ -28,7 +29,6 @@ public class CourseRepository {
 
     public void deleteCourse(String courseId){
         db.collection(Constants.COURSE_COLLECTION).document(courseId).delete().addOnSuccessListener(aVoid->{
-            Log.e("delete","deleted");
         });
 
     }
@@ -70,7 +70,7 @@ public class CourseRepository {
                 taskCompletionSource.setResult(exists);
             } else {
                 Log.e("doesExist", "Error: ", task.getException());
-                taskCompletionSource.setException(task.getException());
+                taskCompletionSource.setException(Objects.requireNonNull(task.getException()));
             }
         });
 
