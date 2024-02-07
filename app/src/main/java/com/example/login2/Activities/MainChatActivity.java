@@ -40,9 +40,7 @@ public class MainChatActivity extends AppCompatActivity {
         }
 
         // Handle click event to enter the group chat room.
-        binding.iconGroup.setOnClickListener(v -> {
-            startActivity(new Intent(MainChatActivity.this, GroupChatActivity.class));
-        });
+        binding.iconGroup.setOnClickListener(v -> startActivity(new Intent(MainChatActivity.this, GroupChatActivity.class)));
 
         // Set up the RecyclerView and students adapter.
         studentsAdapter = new StudentListAdapter(MainChatActivity.this);

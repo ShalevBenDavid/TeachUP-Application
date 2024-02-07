@@ -27,11 +27,8 @@ public class ChatRepository {
 
         messageModel.setMessageId(documentReference.getId());
 
-        documentReference.set(messageModel).addOnSuccessListener(aVoid ->{
-            callback.onSuccess();
-        }).addOnFailureListener(e ->{
-            callback.onFailure(e.getMessage());
-        });
+        documentReference.set(messageModel).addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 
     public interface groupChatCallback{

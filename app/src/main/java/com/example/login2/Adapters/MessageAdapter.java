@@ -1,8 +1,6 @@
 package com.example.login2.Adapters;
 
 import android.content.Context;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +15,10 @@ import com.example.login2.Utils.UserManager;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 public class MessageAdapter extends FirestoreRecyclerAdapter<MessageModel, MessageAdapter.MessageViewHolder> {
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
     private static final int VIEW_TYPE_RECEIVED_GROUP = 3;
-
     private Context context;
 
     public MessageAdapter(@NonNull FirestoreRecyclerOptions<MessageModel> options, Context context) {
@@ -37,7 +31,7 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<MessageModel, Messa
         if (model.getSenderId().equals(UserManager.getInstance().getUserId())) {
             holder.bindSentMessage(model);
         } else {
-            holder.bindRecieveMessage(model);
+            holder.bindReceivedMessage(model);
         }
     }
 
@@ -76,30 +70,30 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<MessageModel, Messa
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
         private final TextView userName;
         private final TextView messageSent;
-        private final TextView messagedRecieved;
+        private final TextView messagedReceived;
         private TextView messageTime;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             userName = itemView.findViewById(R.id.senderName);
             messageSent = itemView.findViewById(R.id.textViewSentMessage);
-            messagedRecieved = itemView.findViewById(R.id.textViewReceivedMessage);
+            messagedReceived = itemView.findViewById(R.id.textViewReceivedMessage);
 
             messageTime = itemView.findViewById(R.id.messageTime);
         }
 
-        public void bindRecieveMessage(MessageModel messageModel) {
+        public void bindReceivedMessage(MessageModel messageModel) {
             if (messageModel.isGroupMessage()) {
                 userName.setText(messageModel.getSenderName());
             }
 
-            messagedRecieved.setText(messageModel.getMessage());
-            messageTime.setText(messageModel.getFormatedTime());
+            messagedReceived.setText(messageModel.getMessage());
+            messageTime.setText(messageModel.getFormattedTime());
         }
 
         public void bindSentMessage(MessageModel messageModel) {
             messageSent.setText(messageModel.getMessage());
-            messageTime.setText(messageModel.getFormatedTime());
+            messageTime.setText(messageModel.getFormattedTime());
         }
     }
 }

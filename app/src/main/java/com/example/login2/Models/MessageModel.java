@@ -6,17 +6,14 @@ import java.util.Date;
 import java.util.Locale;
 import com.google.firebase.Timestamp;
 
-
 public class MessageModel {
     private String messageId;
     private String senderId;
     private String senderName;
     private String message;
     private Timestamp time;
-
-
-
     private boolean isGroupMessage;
+
     // Constructor.
     public MessageModel (String senderId, String senderName, String message, boolean isGroupMessage) {
         this.senderId = senderId;
@@ -37,7 +34,7 @@ public class MessageModel {
     public Timestamp getTime(){
         return time;
     }
-    public String getFormatedTime () {
+    public String getFormattedTime() {
         Date currentDate = time.toDate();
 
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
@@ -52,11 +49,9 @@ public class MessageModel {
     private void setTime () {
         this.time = Timestamp.now();
     }
-
     public boolean isGroupMessage() {
         return isGroupMessage;
     }
-
     public void setGroupMessage(boolean groupMessage) {
         isGroupMessage = groupMessage;
     }
