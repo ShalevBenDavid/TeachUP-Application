@@ -1,38 +1,23 @@
 
 package com.example.login2.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
-
-import com.example.login2.Adapters.StudentListAdapter;
-import com.example.login2.R;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.login2.Adapters.StudentListAdapter;
+import com.example.login2.R;
 import com.example.login2.Utils.CourseManager;
 import com.example.login2.ViewModels.StudentListViewModel;
 import com.example.login2.databinding.ActivityMainChatBinding;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainChatActivity extends AppCompatActivity {
     ActivityMainChatBinding binding;
@@ -42,30 +27,30 @@ public class MainChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Defining layout and setting the content view of the activity.
         binding = ActivityMainChatBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
+        setContentView(binding.getRoot());
 
         // Set up the toolbar.
         setSupportActionBar(binding.toolbar);
-
-        // Set up the icon click listener.
-        // Handle click event to enter the group chat room.
-        binding.iconGroup.setOnClickListener(v -> {
-            startActivity(new Intent(MainChatActivity.this, GroupChatActivity.class));
-        });
 
         // Remove the default app name from the toolbar.
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        // Set up the RecyclerView and UserAdapter.
+        // Handle click event to enter the group chat room.
+        binding.iconGroup.setOnClickListener(v -> {
+            startActivity(new Intent(MainChatActivity.this, GroupChatActivity.class));
+        });
+
+        // Set up the RecyclerView and students adapter.
         studentsAdapter = new StudentListAdapter(MainChatActivity.this);
         StudentListViewModel studentListViewModel = new ViewModelProvider(this).get(StudentListViewModel.class);
         binding.recycler.setLayoutManager(new LinearLayoutManager(this));
         binding.recycler.setAdapter(studentsAdapter);
 
+        // Add the enrolled course students to the students adapter.
         studentListViewModel.getEnrolledStudents(CourseManager.getInstance().getCurrentCourse().getCourseId()).observe(this, students -> {
             if (students != null) {
                 studentsAdapter.setStudents(students);
@@ -73,6 +58,7 @@ public class MainChatActivity extends AppCompatActivity {
         });
     }
 
+    // Create options menu in the toolbar.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

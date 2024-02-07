@@ -7,10 +7,8 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -33,11 +31,12 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Defining layout and setting the content view of the activity.
         binding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        repository = new ChatRepository();
-
+        // Set up the toolbar.
         setSupportActionBar(binding.toolbar);
 
         // Remove the default app name from the toolbar.
@@ -56,12 +55,11 @@ public class ChatActivity extends AppCompatActivity {
         receiverName = getIntent().getStringExtra("name");
         chatId = getChatId(UserManager.getInstance().getUserId(), receiverId);
 
-
         // Set the receiver's name in the toolbar.
         binding.toolbarTitle.setText(receiverName);
 
-
         // Initialize RecyclerView and MessageAdapter.
+        repository = new ChatRepository();
         FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
                 .setQuery(repository.getChatMessages(chatId), MessageModel.class).build();
         messageAdapter = new MessageAdapter(options, this);
@@ -69,7 +67,7 @@ public class ChatActivity extends AppCompatActivity {
         binding.chatRecycler.setLayoutManager(new LinearLayoutManager(this));
 
 
-        // Clicking the send button.
+        // Clicking the send message button.
         binding.sendMessageIcon.setOnClickListener(v -> {
             String message = binding.messageEdit.getText().toString();
             // If there is a message, send it. Otherwise, show error.
@@ -107,15 +105,14 @@ public class ChatActivity extends AppCompatActivity {
         if (userId.compareTo(receiverId) > 0) {
             return userId + receiverId;
         }
-
         return receiverId + userId;
     }
 
-    private void sendMessage(String groupMessage) {
-        // Create a group message model and link to Firebase user.
-        MessageModel messageModel = createMessageModel(groupMessage);
+    private void sendMessage(String Message) {
+        // Create a message model and link to Firebase user.
+        MessageModel messageModel = createMessageModel(Message);
 
-        // Send group message to the group chat document.
+        // Send message to the chat document.
         repository.sendMessage(messageModel,
                 chatId,
                 new ChatRepository.groupChatCallback() {
@@ -123,7 +120,7 @@ public class ChatActivity extends AppCompatActivity {
                     public void onSuccess() {
                         binding.chatRecycler.scrollToPosition(messageAdapter.getItemCount() - 1);
 
-                        // After sending group message, clear the group message box
+                        // After sending message, clear the message box.
                         binding.messageEdit.setText("");
                     }
 
@@ -140,7 +137,7 @@ public class ChatActivity extends AppCompatActivity {
                 false);
     }
 
-    // Create options menu in the toolbar
+    // Create options menu in the toolbar.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -161,12 +158,16 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        messageAdapter.startListening();
+        if (messageAdapter != null) {
+            messageAdapter.startListening();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        messageAdapter.stopListening();
+        if (messageAdapter != null) {
+            messageAdapter.stopListening();
+        }
     }
 }
