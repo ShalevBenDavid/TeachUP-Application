@@ -24,14 +24,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/senderName"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/rounded_corner_received"
-            android:padding="12dp"
             android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:background="@drawable/rounded_corner_received"
+            android:textSize="20sp"
+            android:padding="12dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="8dp"/>
 
         <TextView
             android:id="@+id/messageTime"
@@ -39,11 +37,9 @@
             android:layout_height="wrap_content"
             android:layout_alignEnd="@id/textViewReceivedMessage"
             android:layout_alignBottom="@id/textViewReceivedMessage"
-            android:layout_marginHorizontal="8dp"
-            android:padding="3dp"
-            android:textSize="10dp"
-            android:textColor="@color/common_google_signin_btn_text_light"
-            />
+            android:textColor="@color/black"
+            android:textSize="11sp"
+            android:padding="3dp" />
 
 
     </RelativeLayout>
