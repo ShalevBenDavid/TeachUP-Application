@@ -35,8 +35,7 @@ public class GroupChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityGroupChatBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
+        setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);
 
@@ -46,13 +45,11 @@ public class GroupChatActivity extends AppCompatActivity {
         }
 
         // On press, navigate back to the previous activity.
-        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                Intent intent = new Intent(GroupChatActivity.this, MainChatActivity.class);
-                startActivity(intent);
-            }
+        binding.backButton.setOnClickListener(view -> {
+            Intent intent = new Intent(GroupChatActivity.this, MainChatActivity.class);
+            startActivity(intent);
         });
+
         repository = new ChatRepository();
         FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
                 .setQuery(repository.getChatMessages(getGroupChatId()),MessageModel.class).build();
