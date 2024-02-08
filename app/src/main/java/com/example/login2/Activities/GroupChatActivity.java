@@ -99,7 +99,7 @@ public class GroupChatActivity extends AppCompatActivity {
         // Send group message to the group chat document.
         repository.sendMessage(groupMessageModel,
                 groupChatId,
-                new ChatRepository.groupChatCallback() {
+                new ChatRepository.ChatCallback() {
             @Override
             public void onSuccess() {
                 binding.groupChatRecycler.scrollToPosition(groupMessageAdapter.getItemCount() - 1);

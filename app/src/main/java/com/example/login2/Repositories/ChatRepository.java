@@ -13,17 +13,16 @@ public class ChatRepository {
         db = FirebaseFirestore.getInstance();
     }
 
-    public Query getChatMessages(String chatId){
-        return db.collection(Constants.GROUP_CHAT_REPOSITORY)
+    public Query getChatMessages(String chatId) {
+        return db.collection(Constants.CHAT_REPOSITORY)
                 .document(chatId)
                 .collection("messages")
                 .orderBy("time", Query.Direction.ASCENDING);
     }
 
-    public void sendMessage(MessageModel messageModel,String groupChatId, groupChatCallback callback){
-
-        DocumentReference documentReference = db.collection(Constants.GROUP_CHAT_REPOSITORY)
-                .document(groupChatId).collection("messages").document();
+    public void sendMessage(MessageModel messageModel, String ChatId, ChatCallback callback) {
+        DocumentReference documentReference = db.collection(Constants.CHAT_REPOSITORY)
+                .document(ChatId).collection("messages").document();
 
         messageModel.setMessageId(documentReference.getId());
 
@@ -31,7 +30,7 @@ public class ChatRepository {
                 .addOnFailureListener(e -> callback.onFailure(e.getMessage()));
     }
 
-    public interface groupChatCallback{
+    public interface ChatCallback {
         void onSuccess();
         void onFailure(String message);
     }

@@ -115,7 +115,7 @@ public class ChatActivity extends AppCompatActivity {
         // Send message to the chat document.
         repository.sendMessage(messageModel,
                 chatId,
-                new ChatRepository.groupChatCallback() {
+                new ChatRepository.ChatCallback() {
                     @Override
                     public void onSuccess() {
                         binding.chatRecycler.scrollToPosition(messageAdapter.getItemCount() - 1);
