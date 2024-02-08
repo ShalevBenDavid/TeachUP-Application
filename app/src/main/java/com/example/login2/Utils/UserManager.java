@@ -64,6 +64,10 @@ public class UserManager {
         return currentUser.getUserId();
     }
 
+    public void setUserModel(UserModel user) {
+        this.currentUser = user;
+    }
+
     public interface UserManagerCallback {
         void onUserLoaded(UserModel user);
 

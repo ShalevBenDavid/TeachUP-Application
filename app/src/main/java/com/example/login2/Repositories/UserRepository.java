@@ -24,9 +24,15 @@ public class UserRepository {
 
 
     public void editUser(String userId,
-                         Map<String,String> updates,
+                         Map<String,Object> updates,
                          FirestoreRepositoryCallback listener){
 
+            db.collection(Constants.USERS_COLLECTION).document(userId).update(updates)
+                    .addOnSuccessListener(aVoid ->{
+                        listener.onSuccess(null);
+                    }).addOnFailureListener(e ->{
+                        listener.onError(e.getMessage());
+                    });
     }
 
     public void getCurrentUser(String userId, FirestoreRepositoryCallback listener){

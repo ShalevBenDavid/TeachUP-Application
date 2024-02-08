@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.login2.R;
 import com.example.login2.Utils.CourseManager;
 import com.example.login2.Utils.CustomUtils;
@@ -47,8 +48,16 @@ public class CourseActivity extends AppCompatActivity {
             new Handler().postDelayed(()->binding.courseCodeCard.setCardBackgroundColor(ContextCompat.getColor(this,R.color.white)),100);
             CustomUtils.showToast(this,"Course code copied to clipboard");
         });
+
+        if(UserManager.getInstance().getCurrentUserModel().getProfilePicUrl() != null) {
+            Glide.with(CourseActivity.this)
+                    .load(UserManager.getInstance().getCurrentUserModel().getProfilePicUrl())
+                    .placeholder(R.drawable.course_logo_placeholder)
+                    .into(binding.profilePic);
+        }
+
        binding.profilePic.setOnClickListener((v)->{
-            CustomUtils.showToast(this,"TODO: go to profile");
+            startActivity(new Intent(CourseActivity.this,ProfileActivity.class));
         });
 
        binding.chatActivity.setOnClickListener(v ->{

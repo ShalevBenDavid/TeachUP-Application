@@ -33,7 +33,6 @@ import com.example.login2.Utils.UriUtils;
 import java.util.List;
 
 public class UploadStudyMaterial extends DialogFragment {
-
     private ActivityResultLauncher<Intent> launcher;
     private ImageView uploadImage;
     private EditText fileTitle,fileDescription;

@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/bg2"
     tools:context=".Activities.ProfileActivity">
@@ -19,15 +20,16 @@
             android:src="@drawable/back_icon" />
     </androidx.appcompat.widget.Toolbar>
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:background="@drawable/circle_profile_shape"
-        android:layout_below="@id/toolbar"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/profile_image_default"
-        android:id="@+id/profileImage"/>
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/student_"
+        app:civ_border_color="@color/white"
+        app:civ_border_width="3dp" />
 
     <ImageView
         android:layout_width="30dp"
@@ -49,18 +51,18 @@
         android:layout_below="@id/profileImage"
         android:layout_centerHorizontal="true"/>
 
-    <TextView
+    <EditText
         android:id="@+id/descriptionBox"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/description_box"
         android:layout_below="@id/userName"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:text="jknjk \n\n\n"
-        android:textSize="20dp"
+        android:background="@drawable/description_box"
+        android:hint="Describe yourself..."
+        android:minHeight="48dp"
         android:padding="10dp"
-        />
+        android:textSize="20dp" />
 
     <ImageView
         android:id="@+id/edit_text_button"
@@ -69,4 +71,16 @@
         android:src="@drawable/edit_decription_icon"
         android:layout_toEndOf="@id/descriptionBox"
         android:layout_alignBottom="@id/descriptionBox" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Profile"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/descriptionBox"
+        android:layout_centerHorizontal="true"
+        android:enabled="false"
+        android:id="@+id/editProfileButton"
+        android:textSize="20sp"/>
+
 </RelativeLayout>

@@ -7,6 +7,7 @@ public class UserModel {
     private String userEmail;
     private String userName;
     private String userDescription;
+
     private String profilePicUrl;
 
     public UserModel() {
@@ -48,6 +49,15 @@ public class UserModel {
 
     public void setUserDescription(String userDescription) {
         this.userDescription = userDescription;
+    }
+
+
+    public String getProfilePicUrl() {
+        return profilePicUrl;
+    }
+
+    public void setProfilePicUrl(String profilePicUrl) {
+        this.profilePicUrl = profilePicUrl;
     }
 
 }
