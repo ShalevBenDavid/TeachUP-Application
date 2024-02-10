@@ -47,10 +47,10 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 		getQuizzesFromDB()
 	}
 
-	private fun getQuizzesFromDB() {
+	fun getQuizzesFromDB() {
 		firestore.collection(Constants.COURSE_COLLECTION)
 			.document(CourseManager.getInstance().currentCourse.courseId)
-			.collection("quizzes").orderBy("time", Query.Direction.ASCENDING)
+			.collection("quizzes")
 			.addSnapshotListener { value, error ->
 				if (error != null) {
 					Log.e(TAG, "Error getting documents.", error)
@@ -148,19 +148,6 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 		return score
 	}
 
-//	private fun getQuizzesFromDB() : Unit {
-//		firestore.collection("quizzes")
-//			.get()
-//			.addOnCompleteListener(OnCompleteListener<QuerySnapshot> { task ->
-//				if (task.isSuccessful) {
-//					for (document in task.result) {
-//						Log.d(TAG, document.id + " => " + document.data)
-//					}
-//				} else {
-//					Log.w(TAG, "Error getting documents.", task.exception)
-//				}
-//			})
-//	}
 
 	private fun convertMapToQuiz(questionsList: List<Map<String, Any>>): MutableList<QuestionModel> {
 		val quiz: MutableList<QuestionModel> = mutableListOf()

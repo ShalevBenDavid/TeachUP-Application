@@ -64,6 +64,11 @@ public class CourseActivity extends AppCompatActivity {
            CustomUtils.showToast(this,"chat clicked");
            startActivity(new Intent(CourseActivity.this,MainChatActivity.class));
        });
+
+        binding.quizActivity.setOnClickListener(v ->{
+            CustomUtils.showToast(this,"quizzes clicked");
+            startActivity(new Intent(CourseActivity.this,ComposeCourseQuizzesActivity.class));
+        });
     }
 
     private void copyToClipboard(String string) {

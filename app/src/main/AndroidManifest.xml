@@ -40,6 +40,9 @@
             android:name=".Activities.CourseListActivity"
             android:exported="false" />
         <activity
+            android:name=".Activities.ComposeCourseQuizzesActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.WelcomeActivity"
             android:exported="true">
             <intent-filter>

@@ -1,13 +1,21 @@
 package com.example.login2.Activities
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -16,20 +24,32 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.login2.ui.theme.TeachUp_QuizTheme
 
 @Composable
-fun QuizScore(score: Int, quizNumberOfQuestions: Int) {
+fun QuizScore(score: Int,
+              quizNumberOfQuestions: Int,
+              onExitClicked: () -> Unit
+) {
 	Scaffold(
 		topBar = {
 			QuizScoreScreenAppBar()
 		}
 	) { innerPadding ->
-		Column (modifier = Modifier.padding(innerPadding)) {
-			QuizScoreScreen(score, quizNumberOfQuestions)
+		Column (
+			modifier = Modifier
+				.padding(innerPadding)
+				.fillMaxSize()
+		) {
+			QuizScoreScreen(score,
+			                quizNumberOfQuestions,
+			)
+			Spacer(modifier = Modifier.weight(1f))
+			ExitButton(onExitClicked)
 		}
 	}
 }
@@ -49,16 +69,48 @@ fun QuizScoreScreenAppBar(
 
 @Composable
 fun QuizScoreScreen(
-	score: Int, quizNumberOfQuestions: Int
+	score: Int,
+	quizNumberOfQuestions: Int,
 ) {
 	QuizScoreCard(score, quizNumberOfQuestions)
+}
+
+@Composable
+fun ExitButton(onExitClicked: () -> Unit) {
+	// Exit Button at the bottom
+	Button(
+		onClick = onExitClicked,
+		modifier = Modifier
+			.padding(16.dp),
+//		colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+	) {
+		Row(
+			modifier = Modifier
+				.fillMaxWidth()
+				.padding(8.dp),
+			horizontalArrangement = Arrangement.Center,
+			verticalAlignment = Alignment.CenterVertically
+		) {
+			Icon(
+				imageVector = Icons.Default.ExitToApp,
+				contentDescription = null,
+				tint = Color.White
+			)
+			Spacer(modifier = Modifier.width(8.dp))
+			Text(
+				text = "Return",
+				style = MaterialTheme.typography.labelMedium,
+				color = Color.White
+			)
+		}
+	}
 }
 
 @Composable
 fun QuizScoreCard(score: Int, totalQuestions: Int, modifier: Modifier = Modifier) {
 	Box(
 		modifier = modifier
-			.fillMaxSize()
+//			.fillMaxSize()
 			.padding(16.dp),
 		contentAlignment = Alignment.Center
 	) {
@@ -100,6 +152,6 @@ fun QuizScoreCard(score: Int, totalQuestions: Int, modifier: Modifier = Modifier
 @Composable
 fun QuizScoreScreenPreview() {
 	TeachUp_QuizTheme {
-		QuizScore(10, 15)
+		QuizScoreScreen(10, 15)
 	}
 }

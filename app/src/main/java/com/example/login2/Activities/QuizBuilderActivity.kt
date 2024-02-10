@@ -33,19 +33,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.login2.ViewModels.QuizBuilderViewModel
 import com.example.login2.ui.theme.TeachUp_QuizTheme
 
 
 @Composable
-fun QuizBuilder() {
+fun QuizBuilder(
+	onSubmitQuizClicked: () -> Unit
+) {
 	Scaffold(
 		topBar = {
 			QuizBuilderAppBar()
 		}
 	) { innerPadding ->
 		Column (modifier = Modifier.padding(innerPadding)) {
-			QuizBuilderScreen()
+			QuizBuilderScreen(onSubmitQuizClicked = onSubmitQuizClicked)
 		}
 	}
 }
@@ -67,6 +70,7 @@ fun QuizBuilderAppBar(
 @Composable
 fun QuizBuilderScreen(
 	quizBuilderViewModel: QuizBuilderViewModel = viewModel(),
+	onSubmitQuizClicked: () -> Unit
 ) {
 	val quizBuilderUiState by quizBuilderViewModel.uiState.collectAsState()
 
@@ -206,7 +210,10 @@ fun QuizBuilderScreen(
 		Column {
 //			Spacer(modifier = Modifier.weight(1f))
 			Button(
-				onClick = {quizBuilderViewModel.onSubmit()},
+				onClick = {
+					quizBuilderViewModel.onSubmit()
+					onSubmitQuizClicked()
+				},
 				enabled = quizBuilderUiState.isQuizBuilderDone,
 				modifier = Modifier
 					.fillMaxWidth()
@@ -285,6 +292,6 @@ fun SelectOptionScreen(
 @Composable
 fun QuizBuilderExamplePreview() {
 	TeachUp_QuizTheme {
-		QuizBuilder()
+//		QuizBuilder()
 	}
 }
