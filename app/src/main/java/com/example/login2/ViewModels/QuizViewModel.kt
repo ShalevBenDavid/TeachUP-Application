@@ -47,10 +47,10 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 		getQuizzesFromDB()
 	}
 
-	fun getQuizzesFromDB() {
+	private fun getQuizzesFromDB() {
 		firestore.collection(Constants.COURSE_COLLECTION)
 			.document(CourseManager.getInstance().currentCourse.courseId)
-			.collection("quizzes")
+			.collection("quizzes")	.orderBy("timestamp", Query.Direction.ASCENDING)
 			.addSnapshotListener { value, error ->
 				if (error != null) {
 					Log.e(TAG, "Error getting documents.", error)
@@ -124,7 +124,7 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 		}
 	}
 
-	fun resetQuiz() {
+	private fun resetQuiz() {
 		currentQuestionIndex = 0
 		selectedUserAnswers = MutableList(quiz.questions.size) { -1 }
 		_uiState.value = QuizUiState(

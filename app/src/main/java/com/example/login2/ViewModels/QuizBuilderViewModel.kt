@@ -11,6 +11,7 @@ import com.example.login2.Repositories.StudyMaterialRepository
 import com.example.login2.Utils.Constants
 import com.example.login2.Utils.CourseManager
 import com.example.login2.Utils.CustomUtils
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,21 +31,13 @@ class QuizBuilderViewModel : ViewModel() {
 	private val TAG: String = QuizBuilderViewModel::class.java.simpleName
 
 	private var options: MutableList<String> = MutableList(4) {""}
-	//	private var quizTitle: String = ""
 	private var questionTitle: String = ""
 	private var correctAnswer: Int = -1
 
-	//	private var quiz: MutableList<Question> = mutableListOf()
 	private var quiz: Quiz = Quiz()
 
 	private var numberOfQuestions = 1
 	private var currentQuestionIndex = 0
-
-	init {
-//		quiz.add(
-//			Question()
-//		)
-	}
 
 
 	fun setQuestionTitle(questionTitleInput: String) {
@@ -64,20 +57,9 @@ class QuizBuilderViewModel : ViewModel() {
 	val setOptions: (Int, String) -> Unit = { index, option ->
 		options[index] = option
 		quiz.questions[currentQuestionIndex].options = options
-//		quiz[currentQuestionIndex].optionstoMutableList().apply {
-//			this[index] = option
-//		}
 
 		_uiState.update { currentState ->
 			currentState.copy(
-//				currentQuestionOptions = options,
-//				currentQuestionOptions = quiz[currentQuestionIndex].options,
-//				currentQuestionOptions = currentState.currentQuestionOptions.apply {
-//					this[index] = options[index]
-//				},
-//				currentQuestionOptions = currentState.currentQuestionOptions.().apply {
-//					this[index] = quiz[currentQuestionIndex].options[index]
-//				}
 				currentQuestionOptions = currentState.currentQuestionOptions.toMutableList().apply {
 					this[index] = quiz.questions[currentQuestionIndex].options[index]
 				},
@@ -120,8 +102,6 @@ class QuizBuilderViewModel : ViewModel() {
 				isQuizBuilderDone = isQuizReady(),
 			)
 		}
-
-//		resetQuestionBuilder()
 	}
 
 	fun onBackButtonClicked() {
@@ -161,31 +141,11 @@ class QuizBuilderViewModel : ViewModel() {
 
 	fun onSubmit() {
 		quiz.questions.removeAt(quiz.questions.size - 1)
-//		val quizMap: MutableMap<String, Any> = convertQuizToMap(quiz.subList(0, quiz.size - 1))
-//		quizMap["quizTitle"] = quizTitle
-//		quizRepository.addQuiz(quiz, QuizRepository.FirestoreCallback() {})
 
-//		quizRepository.addQuiz(
-//			quiz,
-//			object : QuizRepository.FirestoreCallback {
-//				override fun onSuccess(quizzes: List<Quiz?>?) {
-//					Log.d(
-//						TAG,
-//						"DocumentSnapshot added with ID: " + documentReference.id
-//					)
-//				}
-//
-//				override fun onError(error: String?) {
-//					Log.w(TAG, "Error adding document", error)
-//				}
-//			}
-//		)
-
+		quiz.timestamp = Timestamp.now()
 		db.collection(Constants.COURSE_COLLECTION)
 			.document(CourseManager.getInstance().currentCourse.courseId)
 			.collection("quizzes")
-//			.document()
-//			.set(quiz)
 			.add(quiz)
 			.addOnSuccessListener { documentReference ->
 				Log.d(
@@ -194,33 +154,6 @@ class QuizBuilderViewModel : ViewModel() {
 				)
 			}
 			.addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
-	}
-
-	private fun convertQuizToMap(quiz: MutableList<QuestionModel>): MutableMap<String, Any> {
-		val quizMap: MutableMap<String, Any> = mutableMapOf()
-
-		quiz.forEachIndexed { index, question ->
-			val questionKey = "question$index"
-			val questionValues = mapOf(
-				"question" to question.question,
-				"options" to question.options,
-				"correctAnswer" to question.correctAnswer
-			)
-
-			quizMap[questionKey] = questionValues
-		}
-
-		return quizMap
-	}
-
-	private fun resetQuestionBuilder() {
-		options.clear()
-		questionTitle = ""
-		correctAnswer = -1
-
-		_uiState.update {
-			QuizBuilderUiState()
-		}
 	}
 
 	fun setQuizTitle(quizTitleInput: String) {
