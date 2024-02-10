@@ -1,9 +1,7 @@
 package com.example.login2.Activities
 
-import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,17 +9,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,21 +23,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.login2.ViewModels.QuizViewModel
-import com.example.login2.R
 import com.example.login2.ui.theme.TeachUp_QuizTheme
 
 @Composable
 fun QuizScreen(
 	quizViewModel: QuizViewModel,
-//	quizUiState: QuizUiState,
-//	quiz: Quiz = Quiz(),
 ) {
 	val quizUiState by quizViewModel.uiState.collectAsState()
 
@@ -119,16 +108,11 @@ fun QuizScreen(
 				}
 			}
 		} else {
-			QuizResult(score = quizViewModel.getScore(), totalNumberOfQuestions = quizUiState
-				.quizNumberOfQuestions, onStartAgain = { quizViewModel.resetQuiz() })
+			QuizScoreScreen(score = quizViewModel.getScore(), quizNumberOfQuestions = quizUiState
+				.quizNumberOfQuestions)
 		}
 	}
 }
-
-//@Composable
-//fun getViewModel(): QuizViewModel {
-//	return viewModel()
-//}
 
 @Composable
 fun QuizQuestion(
@@ -189,88 +173,10 @@ fun QuizAnswerOption(text: String, isSelected: Boolean, onAnswerSelected: () -> 
 	}
 }
 
-@Composable
-fun QuizResult(
-	score: Int,
-	totalNumberOfQuestions: Int,
-	onStartAgain: () -> Unit,
-	modifier: Modifier = Modifier,
-) {
-	val activity = (LocalContext.current as Activity)
-
-	AlertDialog(
-		onDismissRequest = {
-			// Dismiss the dialog when the user clicks outside the dialog or on the back
-			// button. If you want to disable that functionality, simply use an empty
-			// onCloseRequest.
-		},
-		title = { Text(text = "Quiz Completed!") },
-		text = { Text(text = "Your Score: $score/$totalNumberOfQuestions") },
-		modifier = modifier,
-		dismissButton = {
-			TextButton(
-				onClick = {
-					activity.finish()
-				}
-			) {
-				Text(text = stringResource(R.string.exit))
-			}
-		},
-		confirmButton = {
-			TextButton(onClick = onStartAgain) {
-				Text(text = stringResource(R.string.start_again))
-			}
-		}
-	)
-
-	Column(
-		modifier = Modifier
-			.fillMaxSize()
-			.background(MaterialTheme.colorScheme.background)
-			.padding(16.dp),
-		horizontalAlignment = Alignment.CenterHorizontally,
-		verticalArrangement = Arrangement.Center
-	) {
-		Icon(
-			Icons.Rounded.Info,
-			contentDescription = null,
-			tint = MaterialTheme.colorScheme.primary,
-			modifier = Modifier.size(100.dp)
-		)
-		Spacer(modifier = Modifier.height(16.dp))
-		Text(text = "Quiz Completed!", fontWeight = FontWeight.Bold, fontSize = 24.sp)
-		Spacer(modifier = Modifier.height(16.dp))
-		Text(text = "Your Score: $score/$totalNumberOfQuestions", fontSize = 20.sp)
-	}
-}
 
 @Preview(showBackground = true)
 @Composable
 fun QuizPreview() {
 	TeachUp_QuizTheme {
-//		QuizScreen(
-
-//			Quiz(
-//				questions = listOf(
-//					Question(
-//						question = "What is the capital of France?",
-//						options = mutableListOf("Berlin", "London", "Paris", "Madrid"),
-//						correctAnswer = 2
-//					),
-//					Question(
-//						question = "Which planet is known as the Red Planet?",
-//						options = mutableListOf("Venus", "Mars", "Jupiter", "Saturn"),
-//						correctAnswer = 1
-//					),
-//					Question(
-//						question = "What is the capital of Japan?",
-//						options = mutableListOf("Beijing", "Tokyo", "Seoul", "Bangkok"),
-//						correctAnswer = 1
-//					)
-//					// Add more questions as needed
-//				)
-//			)
-//		)
-//        QuizBuilderExample()
 	}
 }

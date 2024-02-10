@@ -1,6 +1,9 @@
 package com.example.login2
 
+import com.example.login2.Models.Quiz
+
 data class QuizBuilderUiState(
+	val quiz: Quiz = Quiz(),
 	val currentQuizTitle: String = "",
 	val numberOfQuestion: Int = 0,
 	val currentQuestionTitle: String = "",

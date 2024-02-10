@@ -2,12 +2,13 @@ package com.example.login2.ViewModels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.login2.Models.QuestionModel
 import com.example.login2.Models.Quiz
 import com.example.login2.QuizUiState
-import com.example.login2.Models.QuestionModel
-import com.google.android.gms.tasks.OnCompleteListener
+import com.example.login2.Utils.Constants
+import com.example.login2.Utils.CourseManager
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,12 +19,16 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 	private var quiz: Quiz = quiz_
 	private val _uiState = MutableStateFlow(
 		QuizUiState(currentQuestionOptions = quiz
-		.questions[0].options)
+			.questions[0].options)
 	)
 	val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
-	private val TAG: String = QuizBuilderViewModel::class.java.simpleName
-	var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+	private val TAG: String = QuizViewModel::class.java.simpleName
+	private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+	var query: Query = firestore.collection("quizzes")
+
+	private val _quizzes = MutableStateFlow<List<Quiz>>(emptyList())
+	val quizzes: StateFlow<List<Quiz>> = _quizzes.asStateFlow()
 
 
 	private var currentQuestionIndex = 0
@@ -38,6 +43,31 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 			quizNumberOfQuestions = quiz.questions.size,
 			isQuizDone = false
 		)
+
+		getQuizzesFromDB()
+	}
+
+	private fun getQuizzesFromDB() {
+		firestore.collection(Constants.COURSE_COLLECTION)
+			.document(CourseManager.getInstance().currentCourse.courseId)
+			.collection("quizzes").orderBy("time", Query.Direction.ASCENDING)
+			.addSnapshotListener { value, error ->
+				if (error != null) {
+					Log.e(TAG, "Error getting documents.", error)
+					return@addSnapshotListener
+				}
+
+				val fetchedQuizzes = mutableListOf<Quiz>()
+				for (document in value!!) {
+					val quizMap = document.data as MutableMap<String, Any>
+					val quiz = Quiz(
+						quizTitle = quizMap["quizTitle"] as String,
+						questions = convertMapToQuiz(quizMap["questions"] as List<Map<String, Any>>)
+					)
+					fetchedQuizzes.add(quiz)
+				}
+				_quizzes.value = fetchedQuizzes
+			}
 	}
 
 	fun onNextPressed() {
@@ -118,31 +148,28 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 		return score
 	}
 
-	private fun getQuizzesFromDB() : Unit {
-		db.collection("quizzes")
-			.get()
-			.addOnCompleteListener(OnCompleteListener<QuerySnapshot> { task ->
-				if (task.isSuccessful) {
-					for (document in task.result) {
-						Log.d(TAG, document.id + " => " + document.data)
-					}
-				} else {
-					Log.w(TAG, "Error getting documents.", task.exception)
-				}
-			})
-	}
+//	private fun getQuizzesFromDB() : Unit {
+//		firestore.collection("quizzes")
+//			.get()
+//			.addOnCompleteListener(OnCompleteListener<QuerySnapshot> { task ->
+//				if (task.isSuccessful) {
+//					for (document in task.result) {
+//						Log.d(TAG, document.id + " => " + document.data)
+//					}
+//				} else {
+//					Log.w(TAG, "Error getting documents.", task.exception)
+//				}
+//			})
+//	}
 
-	private fun convertMapToQuiz(quizMap: MutableMap<String, Any>): MutableList<QuestionModel> {
+	private fun convertMapToQuiz(questionsList: List<Map<String, Any>>): MutableList<QuestionModel> {
 		val quiz: MutableList<QuestionModel> = mutableListOf()
 
-		quizMap.entries.forEach { entry ->
-			val questionKey = entry.key
-			val questionValues = entry.value as Map<String, Any>
-
+		questionsList.forEach { questionMap ->
 			val question = QuestionModel(
-				question = questionValues["question"] as String,
-				options = questionValues["options"] as MutableList<String>,
-				correctAnswer = questionValues["correctAnswer"] as Int
+				question = questionMap["question"] as String,
+				options = questionMap["options"] as MutableList<String>,
+				correctAnswer = (questionMap["correctAnswer"] as Long).toInt() // Assuming correctAnswer is of type Long
 			)
 
 			quiz.add(question)

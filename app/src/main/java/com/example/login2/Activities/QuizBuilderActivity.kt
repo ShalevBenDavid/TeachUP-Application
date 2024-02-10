@@ -89,7 +89,7 @@ fun QuizBuilderScreen(
 			)
 
 			OutlinedTextField(
-				value = quizBuilderUiState.currentQuizTitle,
+				value = quizBuilderUiState.quiz.quizTitle,
 				onValueChange = { quizBuilderViewModel.setQuizTitle(it) },
 				label = { Text("Quiz Title") },
 				maxLines = 2,

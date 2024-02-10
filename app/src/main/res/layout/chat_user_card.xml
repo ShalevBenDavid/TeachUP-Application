@@ -16,6 +16,7 @@
         android:background="@color/PrimaryGray">
 
         <ImageView
+            android:id="@+id/profile"
             android:src="@drawable/person_icon"
             android:layout_gravity="center"
             android:layout_width="40dp"

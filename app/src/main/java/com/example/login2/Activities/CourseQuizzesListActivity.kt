@@ -23,24 +23,27 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.login2.Models.Quiz
-import com.example.login2.Models.quizzes
+import com.example.login2.ViewModels.QuizViewModel
 import com.example.login2.ui.theme.TeachUp_QuizTheme
 
 @Composable
 fun CourseQuizzesListScreen(
 //	quiz: Quiz,
 	onClicked: (Quiz) -> Unit,
-	modifier: Modifier = Modifier
-//	quizViewModel: QuizViewModel = viewModel(),
+	modifier: Modifier = Modifier,
+	quizViewModel: QuizViewModel = viewModel(),
 ) {
 //	val quizUiState by quizViewModel.uiState.collectAsState()
+	val quizzes by quizViewModel.quizzes.collectAsState()
 
 	Scaffold(
 		topBar = {
@@ -52,7 +55,7 @@ fun CourseQuizzesListScreen(
 			contentPadding = it,
 			modifier = Modifier.padding(horizontal = 8.dp)
 		) {
-			items(quizzes) { quiz ->
+			items(quizzes) {quiz ->
 				QuizItem(
 					onClicked = onClicked,
 					quiz = quiz,
