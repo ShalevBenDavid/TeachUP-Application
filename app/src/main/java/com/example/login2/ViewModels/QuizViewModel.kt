@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.example.login2.Models.QuestionModel
 import com.example.login2.Models.Quiz
 import com.example.login2.QuizUiState
+import com.example.login2.Utils.Constants
+import com.example.login2.Utils.CourseManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,27 +48,9 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 	}
 
 	private fun getQuizzesFromDB() {
-//		firestore.collection("quizzes")
-//			.get()
-//			.addOnCompleteListener(OnCompleteListener { task ->
-//				if (task.isSuccessful) {
-//					val fetchedQuizzes = mutableListOf<Quiz>()
-//					for (document in task.result) {
-//						val quizMap = document.data as MutableMap<String, Any>
-//						val quiz = Quiz(
-//							quizTitle = quizMap["quizTitle"] as String,
-//							questions = convertMapToQuiz(quizMap["questions"] as MutableMap<String, Any>)
-//						)
-//
-//						fetchedQuizzes.add(quiz)
-//					}
-//					_quizzes.value = fetchedQuizzes
-//				} else {
-//					Log.w(TAG, "Error getting documents.", task.exception)
-//				}
-//			})
-
-		firestore.collection("quizzes")
+		firestore.collection(Constants.COURSE_COLLECTION)
+			.document(CourseManager.getInstance().currentCourse.courseId)
+			.collection("quizzes").orderBy("time", Query.Direction.ASCENDING)
 			.addSnapshotListener { value, error ->
 				if (error != null) {
 					Log.e(TAG, "Error getting documents.", error)
