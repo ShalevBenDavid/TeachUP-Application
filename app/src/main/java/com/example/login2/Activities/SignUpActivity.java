@@ -2,6 +2,7 @@ package com.example.login2.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 
@@ -27,7 +28,6 @@ public class SignUpActivity extends AppCompatActivity {
         progressDialog = new CustomProgressDialog(this);
 
         setupSignupButton();
-
     }
 
     private void setupSignupButton() {
@@ -100,6 +100,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onSuccess(UserModel user) {
                 CustomUtils.showToast(SignUpActivity.this,"Registered Successfully");
                 progressDialog.dismiss();
+                startActivity(new Intent(SignUpActivity.this,LoginActivity.class));
             }
 
             @Override
