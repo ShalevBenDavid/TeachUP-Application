@@ -50,7 +50,7 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 	private fun getQuizzesFromDB() {
 		firestore.collection(Constants.COURSE_COLLECTION)
 			.document(CourseManager.getInstance().currentCourse.courseId)
-			.collection("quizzes")	.orderBy("timestamp", Query.Direction.ASCENDING)
+			.collection("quizzes")	.orderBy("timestamp", Query.Direction.DESCENDING)
 			.addSnapshotListener { value, error ->
 				if (error != null) {
 					Log.e(TAG, "Error getting documents.", error)
