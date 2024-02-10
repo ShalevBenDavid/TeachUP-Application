@@ -3,6 +3,7 @@ package com.example.login2.ViewModels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.login2.Models.QuestionModel
+import com.example.login2.Models.Quiz
 import com.example.login2.QuizBuilderUiState
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,38 +23,40 @@ class QuizBuilderViewModel : ViewModel() {
 	private val TAG: String = QuizBuilderViewModel::class.java.simpleName
 
 	private var options: MutableList<String> = MutableList(4) {""}
-	private var quizTitle: String = ""
+	//	private var quizTitle: String = ""
 	private var questionTitle: String = ""
 	private var correctAnswer: Int = -1
 
-	private var quiz: MutableList<QuestionModel> = mutableListOf()
+	//	private var quiz: MutableList<Question> = mutableListOf()
+	private var quiz: Quiz = Quiz()
 
 	private var numberOfQuestions = 1
 	private var currentQuestionIndex = 0
 
 	init {
-		quiz.add(
-			QuestionModel()
-		)
+//		quiz.add(
+//			Question()
+//		)
 	}
 
 
 	fun setQuestionTitle(questionTitleInput: String) {
-		quiz[currentQuestionIndex].question = questionTitleInput
+		quiz.questions[currentQuestionIndex].question = questionTitleInput
 
 		_uiState.update { currentState ->
 			currentState.copy(
-				currentQuestionTitle = quiz[currentQuestionIndex].question,
-				isQuestionReady = !quiz[currentQuestionIndex].options.contains("") &&
-				                  quiz[currentQuestionIndex].question != "" &&
-				                  quiz[currentQuestionIndex].correctAnswer != -1
+				quiz = quiz,
+				currentQuestionTitle = quiz.questions[currentQuestionIndex].question,
+				isQuestionReady = !quiz.questions[currentQuestionIndex].options.contains("") &&
+				                  quiz.questions[currentQuestionIndex].question != "" &&
+				                  quiz.questions[currentQuestionIndex].correctAnswer != -1
 			)
 		}
 	}
 
 	val setOptions: (Int, String) -> Unit = { index, option ->
 		options[index] = option
-		quiz[currentQuestionIndex].options = options
+		quiz.questions[currentQuestionIndex].options = options
 //		quiz[currentQuestionIndex].optionstoMutableList().apply {
 //			this[index] = option
 //		}
@@ -69,7 +72,7 @@ class QuizBuilderViewModel : ViewModel() {
 //					this[index] = quiz[currentQuestionIndex].options[index]
 //				}
 				currentQuestionOptions = currentState.currentQuestionOptions.toMutableList().apply {
-					this[index] = quiz[currentQuestionIndex].options[index]
+					this[index] = quiz.questions[currentQuestionIndex].options[index]
 				},
 				isQuestionReady = isQuestionReady()
 			)
@@ -78,7 +81,7 @@ class QuizBuilderViewModel : ViewModel() {
 	}
 
 	fun setCorrectAnswer(desiredCorrectAnswer: Int) {
-		quiz[currentQuestionIndex].correctAnswer = desiredCorrectAnswer
+		quiz.questions[currentQuestionIndex].correctAnswer = desiredCorrectAnswer
 		_uiState.update { currentState ->
 			currentState.copy(
 				correctAnswerIndex = desiredCorrectAnswer,
@@ -88,7 +91,7 @@ class QuizBuilderViewModel : ViewModel() {
 	}
 
 	fun onAddQuestionButtonClicked() {
-		quiz.add(
+		quiz.questions.add(
 			QuestionModel()
 		)
 
@@ -123,9 +126,9 @@ class QuizBuilderViewModel : ViewModel() {
 		Log.d(TAG, "currentQuestionIndex = $currentQuestionIndex")
 		_uiState.update { currentState ->
 			currentState.copy(
-				currentQuestionTitle = quiz[currentQuestionIndex].question,
-				currentQuestionOptions = quiz[currentQuestionIndex].options.toList(),
-				correctAnswerIndex = quiz[currentQuestionIndex].correctAnswer,
+				currentQuestionTitle = quiz.questions[currentQuestionIndex].question,
+				currentQuestionOptions = quiz.questions[currentQuestionIndex].options.toList(),
+				correctAnswerIndex = quiz.questions[currentQuestionIndex].correctAnswer,
 				currentQuestionNumber = currentState.currentQuestionNumber.dec(),
 				isQuestionReady = isQuestionReady()
 			)
@@ -140,9 +143,9 @@ class QuizBuilderViewModel : ViewModel() {
 		Log.d(TAG, "currentQuestionIndex = $currentQuestionIndex")
 		_uiState.update { currentState ->
 			currentState.copy(
-				currentQuestionTitle = quiz[currentQuestionIndex].question,
-				currentQuestionOptions = quiz[currentQuestionIndex].options.toList(),
-				correctAnswerIndex = quiz[currentQuestionIndex].correctAnswer,
+				currentQuestionTitle = quiz.questions[currentQuestionIndex].question,
+				currentQuestionOptions = quiz.questions[currentQuestionIndex].options.toList(),
+				correctAnswerIndex = quiz.questions[currentQuestionIndex].correctAnswer,
 				currentQuestionNumber = currentState.currentQuestionNumber.inc(),
 				isQuestionReady = isQuestionReady()
 			)
@@ -150,10 +153,11 @@ class QuizBuilderViewModel : ViewModel() {
 	}
 
 	fun onSubmit() {
-		val quizMap: MutableMap<String, Any> = convertQuizToMap(quiz.subList(0, quiz.size - 1))
-		quizMap["quizTitle"] = quizTitle
+		quiz.questions.removeAt(quiz.questions.size - 1)
+//		val quizMap: MutableMap<String, Any> = convertQuizToMap(quiz.subList(0, quiz.size - 1))
+//		quizMap["quizTitle"] = quizTitle
 		db.collection("quizzes")
-			.add(quizMap)
+			.add(quiz)
 			.addOnSuccessListener { documentReference ->
 				Log.d(
 					TAG,
@@ -191,11 +195,12 @@ class QuizBuilderViewModel : ViewModel() {
 	}
 
 	fun setQuizTitle(quizTitleInput: String) {
-		quizTitle = quizTitleInput
+		quiz.quizTitle = quizTitleInput
 
 		_uiState.update { currentState ->
 			currentState.copy(
-				currentQuizTitle = quizTitle,
+				quiz = quiz,
+				currentQuizTitle = quiz.quizTitle,
 				isQuestionReady = isQuestionReady(),
 				isQuizBuilderDone = isQuizReady(),
 			)
@@ -203,12 +208,12 @@ class QuizBuilderViewModel : ViewModel() {
 	}
 
 	private fun isQuestionReady() : Boolean {
-		return !quiz[currentQuestionIndex].options.contains("") &&
-		       quiz[currentQuestionIndex].question != "" &&
-		       quiz[currentQuestionIndex].correctAnswer != -1
+		return !quiz.questions[currentQuestionIndex].options.contains("") &&
+		       quiz.questions[currentQuestionIndex].question != "" &&
+		       quiz.questions[currentQuestionIndex].correctAnswer != -1
 	}
 
 	private fun isQuizReady() : Boolean {
-		return quizTitle.isNotEmpty() && quiz.size > 1
+		return quiz.quizTitle.isNotEmpty() && quiz.questions.size > 1
 	}
 }
