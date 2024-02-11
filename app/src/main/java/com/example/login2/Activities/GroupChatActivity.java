@@ -20,6 +20,7 @@ import com.example.login2.Repositories.ChatRepository;
 import com.example.login2.Utils.CourseManager;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
+import com.example.login2.ViewModels.ChatViewModel;
 import com.example.login2.databinding.ActivityGroupChatBinding;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -27,7 +28,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 public class GroupChatActivity extends AppCompatActivity {
     private ActivityGroupChatBinding binding;
     private MessageAdapter groupMessageAdapter;
-    private ChatRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +52,8 @@ public class GroupChatActivity extends AppCompatActivity {
         });
 
         // Initialize RecyclerView and MessageAdapter.
-        repository = new ChatRepository();
         FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
-                .setQuery(repository.getChatMessages(getGroupChatId()),MessageModel.class).build();
+                .setQuery(ChatViewModel.getFromChat(getGroupChatId()),MessageModel.class).build();
         groupMessageAdapter = new MessageAdapter(options,this);
         binding.groupChatRecycler.setAdapter(groupMessageAdapter);
         binding.groupChatRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -97,7 +96,7 @@ public class GroupChatActivity extends AppCompatActivity {
         String groupChatId = getGroupChatId();
 
         // Send group message to the group chat document.
-        repository.sendMessage(groupMessageModel,
+        ChatViewModel.sendToChat(groupMessageModel,
                 groupChatId,
                 new ChatRepository.ChatCallback() {
             @Override
