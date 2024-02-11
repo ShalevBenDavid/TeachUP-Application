@@ -27,6 +27,11 @@ public class SignUpActivity extends AppCompatActivity {
 
         progressDialog = new CustomProgressDialog(this);
 
+        binding.signin.setOnClickListener(v ->{
+            startActivity(new Intent(SignUpActivity.this,LoginActivity.class));
+            finish();
+        });
+
         setupSignupButton();
     }
 
