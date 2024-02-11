@@ -6,26 +6,11 @@
     android:background="@drawable/bg2"
     tools:context=".Activities.ProfileActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/PrimaryBlue">
-
-        <ImageView
-            android:id="@+id/backButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/back_icon" />
-    </androidx.appcompat.widget.Toolbar>
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/toolbar"
         android:layout_marginTop="20dp"
         android:src="@drawable/student_"
         app:civ_border_color="@color/white"
