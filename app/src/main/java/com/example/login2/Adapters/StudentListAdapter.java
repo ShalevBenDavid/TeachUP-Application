@@ -45,8 +45,7 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
         // Upon clicking on the profile icon, open profile page.
         holder.profileIcon.setOnClickListener(v ->{
             Intent intent = new Intent(context, ProfileActivity.class);
-            intent.putExtra("userid", student.getUserId());
-            intent.putExtra("profileowner", false);
+            intent.putExtra("userModel", students.get(position));
             context.startActivity(intent);
         });
 

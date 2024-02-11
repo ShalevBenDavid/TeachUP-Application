@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -28,11 +30,9 @@ import java.util.Map;
 public class ProfileActivity extends AppCompatActivity {
     private ActivityProfileBinding binding;
     private ActivityResultLauncher<Intent> launcher;
-
     private StorageRepository storageRepository;
     private UserRepository userRepository;
     private CustomProgressDialog progressDialog;
-
     private Uri fileUri;
 
     @Override
@@ -42,7 +42,35 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         progressDialog = new CustomProgressDialog(this);
+        
+        boolean owner = getIntent().getBooleanExtra("profileowner",false);
+        Log.e("isowner", String.valueOf(owner));
+        if(owner){
+            setUpForOwner();
+        } else {
+            setUpForViewer();
+        }
+    }
 
+    private void setUpForViewer() {
+        UserModel user = getIntent().getParcelableExtra("userModel");
+        if(user != null) {
+            binding.userName.setText(user.getUserName());
+            binding.descriptionBox.setText(user.getUserDescription());
+
+            Glide.with(ProfileActivity.this)
+                    .load(user.getProfilePicUrl())
+                    .placeholder(R.drawable.course_logo_placeholder)
+                    .into(binding.profileImage);
+
+            binding.editImage.setVisibility(View.GONE);
+            binding.editTextButton.setVisibility(View.GONE);
+            binding.descriptionBox.setEnabled(false);
+            binding.editProfileButton.setVisibility(View.GONE);
+        }
+    }
+
+    private void setUpForOwner() {
         binding.userName.setText(UserManager.getInstance().getUserName());
         binding.descriptionBox.setText(UserManager.getInstance().getUserDescription());
 
