@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.login2.R;import com.example.login2.Utils.Constants;
+import com.example.login2.R;
 import com.example.login2.Utils.CourseManager;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
@@ -65,8 +65,11 @@ public class CourseActivity extends AppCompatActivity {
            startActivity(new Intent(CourseActivity.this,MainChatActivity.class));
        });
 
+        binding.quizActivity.setOnClickListener(v ->{
+            CustomUtils.showToast(this,"quizzes clicked");
+            startActivity(new Intent(CourseActivity.this,ComposeCourseQuizzesActivity.class));
+        });
     }
-
 
     private void copyToClipboard(String string) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);

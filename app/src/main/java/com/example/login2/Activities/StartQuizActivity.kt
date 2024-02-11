@@ -33,32 +33,32 @@ import com.example.login2.ui.theme.TeachUp_QuizTheme
 @Composable
 fun QuizScreen(
 	quizViewModel: QuizViewModel,
+	onExitClicked : () -> Unit
 ) {
 	val quizUiState by quizViewModel.uiState.collectAsState()
 
-	Column(
-		modifier = Modifier
-			.fillMaxSize()
-			.padding(16.dp)
-	) {
-		LinearProgressIndicator(
-			progress = quizUiState.currentQuestionNumber / quizUiState.quizNumberOfQuestions.toFloat(),
+	if (!quizUiState.isQuizDone) {
+		Column(
 			modifier = Modifier
-				.fillMaxWidth()
-				.padding(bottom = 16.dp),
-		)
-		Text(
-			modifier = Modifier
-				.clip(MaterialTheme.shapes.medium)
-				.background(MaterialTheme.colorScheme.surfaceTint)
-				.padding(horizontal = 10.dp, vertical = 4.dp)
-				.align(alignment = Alignment.End),
-			text = "${quizUiState.currentQuestionNumber}/${quizUiState.quizNumberOfQuestions}",
-			style = MaterialTheme.typography.titleMedium,
-			color = MaterialTheme.colorScheme.onPrimary
-		)
-
-		if (!quizUiState.isQuizDone) {
+				.fillMaxSize()
+				.padding(16.dp)
+		) {
+			LinearProgressIndicator(
+				progress = quizUiState.currentQuestionNumber / quizUiState.quizNumberOfQuestions.toFloat(),
+				modifier = Modifier
+					.fillMaxWidth()
+					.padding(bottom = 16.dp),
+			)
+			Text(
+				modifier = Modifier
+					.clip(MaterialTheme.shapes.medium)
+					.background(MaterialTheme.colorScheme.surfaceTint)
+					.padding(horizontal = 10.dp, vertical = 4.dp)
+					.align(alignment = Alignment.End),
+				text = "${quizUiState.currentQuestionNumber}/${quizUiState.quizNumberOfQuestions}",
+				style = MaterialTheme.typography.titleMedium,
+				color = MaterialTheme.colorScheme.onPrimary
+			)
 
 			QuizQuestion(
 				questionTitle = quizUiState.currentQuestionTitle,
@@ -107,10 +107,13 @@ fun QuizScreen(
 					}
 				}
 			}
-		} else {
-			QuizScoreScreen(score = quizViewModel.getScore(), quizNumberOfQuestions = quizUiState
-				.quizNumberOfQuestions)
 		}
+	} else {
+		QuizScore(
+			score = quizViewModel.getScore(),
+			quizNumberOfQuestions = quizUiState.quizNumberOfQuestions,
+			onExitClicked
+		)
 	}
 }
 
