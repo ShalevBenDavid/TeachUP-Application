@@ -18,6 +18,7 @@ public class SignUpActivity extends AppCompatActivity {
     private ActivitySignUpBinding binding;
     private FirebaseAuthRepository repository = new FirebaseAuthRepository();
     private CustomProgressDialog progressDialog;
+    private String type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +28,12 @@ public class SignUpActivity extends AppCompatActivity {
 
         progressDialog = new CustomProgressDialog(this);
 
+        type = getIntent().getStringExtra("type");
+
         binding.signin.setOnClickListener(v ->{
-            startActivity(new Intent(SignUpActivity.this,LoginActivity.class));
+            Intent intent = new Intent(SignUpActivity.this,LoginActivity.class);
+            intent.putExtra("type",type);
+            startActivity(intent);
             finish();
         });
 
@@ -103,9 +108,12 @@ public class SignUpActivity extends AppCompatActivity {
         userRepository.addUser(newUser, new UserRepository.FirestoreRepositoryCallback() {
             @Override
             public void onSuccess(UserModel user) {
+                Intent intent = new Intent(SignUpActivity.this,LoginActivity.class);
+                intent.putExtra("type",type);
                 CustomUtils.showToast(SignUpActivity.this,"Registered Successfully");
                 progressDialog.dismiss();
-                startActivity(new Intent(SignUpActivity.this,LoginActivity.class));
+                startActivity(intent);
+                finish();
             }
 
             @Override

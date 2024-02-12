@@ -15,8 +15,6 @@ public class StorageRepository {
 
     public void uploadFile(Uri fileUri,String storagePath,StorageTaskListener listener){
         StorageReference reference = storage.getReference().child(storagePath);
-        Log.e("file uri",fileUri.toString());
-        Log.e("path",storagePath);
 
         reference.putFile(fileUri).addOnSuccessListener(taskSnapshot -> {
             reference.getDownloadUrl().addOnSuccessListener(downloadUrl ->{

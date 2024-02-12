@@ -12,10 +12,7 @@ import java.util.Objects
 class QuizRepository {
 	private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
 	private val TAG: String = QuizRepository::class.java.simpleName
-//	fun getCourseQuizzes(): Query {
-//		return db
-//			.collection("quizzes").orderBy("time", Query.Direction.ASCENDING)
-//	}
+
 
 	fun getCourseQuizzes(): Query {
 		return db.collection(Constants.COURSE_COLLECTION)
@@ -37,12 +34,6 @@ class QuizRepository {
 			}
 	}
 
-//	fun addQuiz(quiz: Quiz) {
-//		db.collection(Constants.COURSE_COLLECTION)
-//			.document(CourseManager.getInstance().currentCourse.courseId)
-//			.collection("quizzes")
-//			.document().set(quiz)
-//	}
 
 	interface FirestoreCallback {
 		fun onSuccess(quizzes: List<Quiz?>?)

@@ -17,6 +17,7 @@ import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.UserManager;
 import com.example.login2.databinding.ActivityWelcomeBinding;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.firestore.auth.User;
 
 public class WelcomeActivity extends AppCompatActivity {
     private ActivityWelcomeBinding binding;

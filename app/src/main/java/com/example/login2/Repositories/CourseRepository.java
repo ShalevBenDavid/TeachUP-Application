@@ -34,16 +34,16 @@ public class CourseRepository {
     }
 
     public Task<CourseModel>  getCourse(String courseId){
-       TaskCompletionSource<CourseModel> taskCompletionSource = new TaskCompletionSource<>();
+        TaskCompletionSource<CourseModel> taskCompletionSource = new TaskCompletionSource<>();
 
-       db.collection(Constants.COURSE_COLLECTION).document(courseId).get()
-               .addOnSuccessListener(documentSnapshot -> {
-                   CourseModel course = documentSnapshot.toObject(CourseModel.class);
-                   taskCompletionSource.setResult(course);
-               })
-               .addOnFailureListener(taskCompletionSource::setException);
+        db.collection(Constants.COURSE_COLLECTION).document(courseId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    CourseModel course = documentSnapshot.toObject(CourseModel.class);
+                    taskCompletionSource.setResult(course);
+                })
+                .addOnFailureListener(taskCompletionSource::setException);
 
-       return taskCompletionSource.getTask();
+        return taskCompletionSource.getTask();
     }
 
     public Query getAllCoursesTaughtBy(String userId){
@@ -66,10 +66,8 @@ public class CourseRepository {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 boolean exists = document != null && document.exists();
-                Log.e("doesExist", "Document exists: " + exists);
                 taskCompletionSource.setResult(exists);
             } else {
-                Log.e("doesExist", "Error: ", task.getException());
                 taskCompletionSource.setException(Objects.requireNonNull(task.getException()));
             }
         });

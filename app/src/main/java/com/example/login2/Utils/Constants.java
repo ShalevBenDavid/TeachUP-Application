@@ -16,4 +16,6 @@ public final class Constants {
     public static final String VIDEO_FILE = "video";
     public static final String UNKNOWN_FILE_TYPE = "unknown";
     public static final String CHAT_REPOSITORY = "chats";
+    public static final String PROFILE_OWNER = "profileOwner";
+    public static final String USER_MODEL ="userModel";
 }

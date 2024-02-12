@@ -37,7 +37,6 @@ public class UserManager {
                 type = userType;
                 userManagerCallback.onUserLoaded(user);
                 Log.d("UserManager", "currentUser set: " + user);
-
             }
 
             @Override

@@ -28,7 +28,6 @@ public class CourseListViewModel extends ViewModel {
                 loadStudentCourses(userType);
             } else {
                 loadTeacherCourses();
-
             }
         }
         return courses;

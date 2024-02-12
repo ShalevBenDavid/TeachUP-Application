@@ -1,5 +1,7 @@
 package com.example.login2.Activities;
 
+import static com.example.login2.Utils.Constants.PROFILE_OWNER;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,7 +60,7 @@ public class CourseActivity extends AppCompatActivity {
 
         binding.profilePic.setOnClickListener((v) -> {
             Intent intent = new Intent(new Intent(CourseActivity.this, ProfileActivity.class));
-            intent.putExtra("profileowner", true);
+            intent.putExtra(PROFILE_OWNER, true);
             startActivity(intent);
         });
 

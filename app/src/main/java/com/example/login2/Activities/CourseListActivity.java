@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.login2.Adapters.StudentCourseAdapter;
@@ -41,6 +42,9 @@ public class CourseListActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
         userType = UserManager.getInstance().getUserType();
+        if(userType == null){
+            userType = getIntent().getStringExtra("type");
+        }
 
         courseRepository = new CourseRepository();
         courseListViewModel = new ViewModelProvider(this).get(CourseListViewModel.class);

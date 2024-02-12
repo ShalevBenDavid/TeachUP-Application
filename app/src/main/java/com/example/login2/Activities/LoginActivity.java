@@ -1,5 +1,7 @@
 package com.example.login2.Activities;
 
+import static com.example.login2.Utils.Constants.USER_TYPE_KEY;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -58,7 +60,9 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         binding.signUp.setOnClickListener(v ->{
-            startActivity(new Intent(LoginActivity.this,SignUpActivity.class));
+            Intent intent = new Intent(LoginActivity.this,SignUpActivity.class);
+            intent.putExtra("type",type);
+            startActivity(intent);
         });
     }
 
@@ -67,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         auth.login(email, password, new FirebaseAuthRepository.AuthResultListener() {
             @Override
             public void onSuccess(FirebaseUser user) {
+                saveUserType();
                 onLoginSuccess();
             }
 
@@ -78,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void onLoginSuccess(){
-        saveUserType();
 
         UserManager.getInstance().setUserModel(auth.getUid(),type, new UserManager.UserManagerCallback() {
             @Override
@@ -99,15 +103,15 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences(
                 Constants.SHARED_PREFS_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(Constants.USER_TYPE_KEY,type);
+        editor.putString(USER_TYPE_KEY,type);
         editor.apply();
     }
 
     private void startCourseListActivity() {
         Intent intent = new Intent(LoginActivity.this, CourseListActivity.class);
+        intent.putExtra("type",type);
         startActivity(intent);
         progressDialog.dismiss();
-        finish();
     }
 
     private void onLoginFailure(String message){
@@ -116,8 +120,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean validateCredentials(String userEmail, String userPassword) {
-        Log.e("email",userEmail);
-        Log.e("pass",userPassword);
         if(userEmail.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(userEmail).matches()){
             CustomUtils.showToast(this,"Enter a valid email address");
             return false;

@@ -18,11 +18,4 @@ public class QuizRepositoryJava {
                 .document(CourseManager.getInstance().getCurrentCourse().getCourseId())
                 .collection("quizzes").orderBy("time", Query.Direction.ASCENDING);
     }
-
-//    public void addQuiz(QuizModelKt quiz){
-//        db.collection(Constants.COURSE_COLLECTION)
-//                .document(CourseManager.getInstance().getCurrentCourse().getCourseId())
-//                .collection("quizzes")
-//                .document().set(quiz);
-//    }
 }
