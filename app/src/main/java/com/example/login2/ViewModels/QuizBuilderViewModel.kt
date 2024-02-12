@@ -4,13 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.login2.Models.QuestionModel
 import com.example.login2.Models.Quiz
-import com.example.login2.Models.StudyMaterialModel
 import com.example.login2.QuizBuilderUiState
-import com.example.login2.Repositories.QuizRepository
-import com.example.login2.Repositories.StudyMaterialRepository
 import com.example.login2.Utils.Constants
 import com.example.login2.Utils.CourseManager
-import com.example.login2.Utils.CustomUtils
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +22,6 @@ class QuizBuilderViewModel : ViewModel() {
 	val uiState: StateFlow<QuizBuilderUiState> = _uiState.asStateFlow()
 
 	var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-	private val quizRepository: QuizRepository = QuizRepository()
 
 	private val TAG: String = QuizBuilderViewModel::class.java.simpleName
 

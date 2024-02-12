@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.login2.Adapters.MessageAdapter;
@@ -18,6 +19,7 @@ import com.example.login2.R;
 import com.example.login2.Repositories.ChatRepository;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
+import com.example.login2.ViewModels.ChatViewModel;
 import com.example.login2.databinding.ActivityChatBinding;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
@@ -26,7 +28,6 @@ public class ChatActivity extends AppCompatActivity {
     ActivityChatBinding binding;
     String receiverId, receiverName, chatId;
     MessageAdapter messageAdapter;
-    ChatRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +60,8 @@ public class ChatActivity extends AppCompatActivity {
         binding.toolbarTitle.setText(receiverName);
 
         // Initialize RecyclerView and MessageAdapter.
-        repository = new ChatRepository();
         FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
-                .setQuery(repository.getChatMessages(chatId), MessageModel.class).build();
+                .setQuery(ChatViewModel.getFromChat(chatId), MessageModel.class).build();
         messageAdapter = new MessageAdapter(options, this);
         binding.chatRecycler.setAdapter(messageAdapter);
         binding.chatRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -113,7 +113,7 @@ public class ChatActivity extends AppCompatActivity {
         MessageModel messageModel = createMessageModel(Message);
 
         // Send message to the chat document.
-        repository.sendMessage(messageModel,
+        ChatViewModel.sendToChat(messageModel,
                 chatId,
                 new ChatRepository.ChatCallback() {
                     @Override

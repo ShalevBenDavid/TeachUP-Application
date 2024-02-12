@@ -1,4 +1,4 @@
-package com.example.login2.Activities
+package com.example.login2.composables
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
@@ -47,27 +47,23 @@ fun CourseQuizzesListScreen(
 	modifier: Modifier = Modifier,
 	quizViewModel: QuizViewModel = viewModel(),
 ) {
-//	val quizUiState by quizViewModel.uiState.collectAsState()
 	val quizzes by quizViewModel.quizzes.collectAsState()
 
 	Scaffold(
+		modifier = modifier,
 		topBar = {
 			CourseQuizzesListAppBar()
 		},
 		content = {
-			Column (
-				modifier = Modifier
-					.fillMaxSize()
+			Column(
+				modifier = Modifier.fillMaxSize()
 			) {
 				LazyColumn(
-					contentPadding = it,
-					modifier = Modifier.padding(horizontal = 8.dp)
+					contentPadding = it, modifier = Modifier.padding(horizontal = 8.dp)
 				) {
 					items(quizzes) { quiz ->
 						QuizItem(
-							onClicked = onClicked,
-							quiz = quiz,
-							modifier = Modifier.padding(8.dp)
+							onClicked = onClicked, quiz = quiz, modifier = Modifier.padding(8.dp)
 						)
 					}
 				}
@@ -95,13 +91,14 @@ fun CourseQuizzesListScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 fun CourseQuizzesListAppBar(
 	modifier: Modifier = Modifier,
-) {	TopAppBar(
-	title = {Text(text = "Course Quizzes")},
-	colors = TopAppBarDefaults.mediumTopAppBarColors(
-		containerColor = MaterialTheme.colorScheme.primaryContainer
-	),
-	modifier = modifier,
-)
+) {
+	TopAppBar(
+		title = { Text(text = "Course Quizzes") },
+		colors = TopAppBarDefaults.mediumTopAppBarColors(
+			containerColor = MaterialTheme.colorScheme.primaryContainer
+		),
+		modifier = modifier,
+	)
 }
 
 @Composable
@@ -124,19 +121,16 @@ fun QuizItem(
 			modifier = Modifier
 				.background(color = color)
 				.height(50.dp),
-
-			) {
-			Row(
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(8.dp)
-					.clickable { onClicked(quiz) }
+		) {
+			Row(modifier = Modifier
+				.fillMaxWidth()
+				.padding(8.dp)
+				.clickable { onClicked(quiz) }
 			) {
 				Text(
 					text = quiz.quizTitle,
 					style = MaterialTheme.typography.titleMedium,
-					modifier = Modifier
-						.padding(start = 8.dp)
+					modifier = Modifier.padding(start = 8.dp)
 				)
 				Spacer(modifier = Modifier.weight(1f))
 				Icon(

@@ -1,7 +1,6 @@
-package com.example.login2.Activities
+package com.example.login2.composables
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -33,21 +32,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.example.login2.ViewModels.QuizBuilderViewModel
 import com.example.login2.ui.theme.TeachUp_QuizTheme
 
 
 @Composable
 fun QuizBuilder(
-	onSubmitQuizClicked: () -> Unit
+	onSubmitQuizClicked: () -> Unit,
 ) {
-	Scaffold(
-		topBar = {
-			QuizBuilderAppBar()
-		}
-	) { innerPadding ->
-		Column (modifier = Modifier.padding(innerPadding)) {
+	Scaffold(topBar = {
+		QuizBuilderAppBar()
+	}) { innerPadding ->
+		Column(modifier = Modifier.padding(innerPadding)) {
 			QuizBuilderScreen(onSubmitQuizClicked = onSubmitQuizClicked)
 		}
 	}
@@ -56,9 +52,10 @@ fun QuizBuilder(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizBuilderAppBar(
-	modifier: Modifier = Modifier
-) {	TopAppBar(
-		title = {Text(text = "Quiz Builder")},
+	modifier: Modifier = Modifier,
+) {
+	TopAppBar(
+		title = { Text(text = "Quiz Builder") },
 		colors = TopAppBarDefaults.mediumTopAppBarColors(
 			containerColor = MaterialTheme.colorScheme.primaryContainer
 		),
@@ -70,7 +67,7 @@ fun QuizBuilderAppBar(
 @Composable
 fun QuizBuilderScreen(
 	quizBuilderViewModel: QuizBuilderViewModel = viewModel(),
-	onSubmitQuizClicked: () -> Unit
+	onSubmitQuizClicked: () -> Unit,
 ) {
 	val quizBuilderUiState by quizBuilderViewModel.uiState.collectAsState()
 
@@ -79,8 +76,8 @@ fun QuizBuilderScreen(
 			.fillMaxSize()
 			.padding(16.dp)
 	) {
-
 		Column {
+			// Quiz number of questions
 			Text(
 				modifier = Modifier
 					.clip(MaterialTheme.shapes.medium)
@@ -92,6 +89,7 @@ fun QuizBuilderScreen(
 				color = MaterialTheme.colorScheme.onPrimary
 			)
 
+			// Quiz Title
 			OutlinedTextField(
 				value = quizBuilderUiState.quiz.quizTitle,
 				onValueChange = { quizBuilderViewModel.setQuizTitle(it) },
@@ -103,6 +101,7 @@ fun QuizBuilderScreen(
 					.verticalScroll(rememberScrollState())
 			)
 
+			// Question Title
 			OutlinedTextField(
 				value = quizBuilderUiState.currentQuestionTitle,
 				onValueChange = { quizBuilderViewModel.setQuestionTitle(it) },
@@ -115,62 +114,22 @@ fun QuizBuilderScreen(
 			)
 		}
 
-//		Column(
-//			modifier = Modifier
-//				.fillMaxHeight()
-//				.verticalScroll(rememberScrollState())
-//				.weight(1f)
-//		) {
-//			SelectOptionScreen(
-//				options = quizBuilderUiState.currentQuestionOptions,
-//				selectedOptionIndex = quizBuilderUiState.correctAnswerIndex,
-//				onSelectionChanged = { quizBuilderViewModel.setCorrectAnswer(it) },
-//				onOptionsChange = quizBuilderViewModel.setOptions,
-//			)
-//		}
+		QuestionOptionsList(modifier = Modifier
+			.fillMaxHeight()
+			.weight(1f),
+		                    options = quizBuilderUiState.currentQuestionOptions,
+		                    selectedOptionIndex = quizBuilderUiState.correctAnswerIndex,
+		                    onSelectionChanged = { quizBuilderViewModel.setCorrectAnswer(it) },
+		                    onOptionsChange = { index, newValue ->
+			                    quizBuilderViewModel.setOptions(index, newValue)
+		                    })
 
-		LazyColumn(
-			modifier = Modifier
-				.fillMaxHeight()
-				.weight(1f)
-//				.nestedScroll(rememberNestedScrollState())
-//				.verticalScroll(rememberScrollState())
-		) {
-			items(quizBuilderUiState.currentQuestionOptions.size) { index ->
-				Row(
-					modifier = Modifier
-						.clickable {
-							quizBuilderViewModel.setCorrectAnswer(index)
-						}
-						.padding(vertical = 4.dp),
-					verticalAlignment = Alignment.CenterVertically
-				) {
-					RadioButton(
-						selected = quizBuilderUiState.correctAnswerIndex == index,
-						onClick = {
-							quizBuilderViewModel.setCorrectAnswer(index)
-						}
-					)
-					OutlinedTextField(
-						value = quizBuilderUiState.currentQuestionOptions[index],
-						onValueChange = { newValue ->
-							quizBuilderViewModel.setOptions(index, newValue)
-						},
-						label = { Text("Option ${(index + 1)}") },
-						maxLines = 2,
-						modifier = Modifier
-							.fillMaxWidth()
-							.background(Color.Transparent)
-					)
-				}
-			}
-		}
-
+		// Navigation between questions and submitting buttons
 		Column {
 			Spacer(modifier = Modifier.padding(8.dp))
 			if (quizBuilderUiState.currentQuestionNumber == quizBuilderUiState.quizNumberOfQuestions) {
 				Button(
-					onClick = {quizBuilderViewModel.onAddQuestionButtonClicked()},
+					onClick = { quizBuilderViewModel.onAddQuestionButtonClicked() },
 					enabled = quizBuilderUiState.isQuestionReady,
 					modifier = Modifier
 						.fillMaxWidth()
@@ -179,13 +138,11 @@ fun QuizBuilderScreen(
 					Text("Add Question")
 				}
 			}
-			Row (
-				modifier = Modifier
-					.fillMaxWidth()
+			Row(
+				modifier = Modifier.fillMaxWidth()
 			) {
-//			Log.d("QuizBuilderScreen", "quizBuilderUiState.currentQuestionNumber = $quizBuilderUiState.currentQuestionNumber")
 				Button(
-					onClick = {quizBuilderViewModel.onBackButtonClicked()},
+					onClick = { quizBuilderViewModel.onBackButtonClicked() },
 					enabled = quizBuilderUiState.currentQuestionNumber != 1,
 					modifier = Modifier
 						.padding(horizontal = 16.dp)
@@ -195,7 +152,7 @@ fun QuizBuilderScreen(
 				}
 
 				Button(
-					onClick = {quizBuilderViewModel.onNextButtonClicked()},
+					onClick = { quizBuilderViewModel.onNextButtonClicked() },
 					enabled = quizBuilderUiState.currentQuestionNumber < quizBuilderUiState.quizNumberOfQuestions,
 					modifier = Modifier
 						.padding(horizontal = 16.dp)
@@ -206,9 +163,7 @@ fun QuizBuilderScreen(
 			}
 		}
 
-
 		Column {
-//			Spacer(modifier = Modifier.weight(1f))
 			Button(
 				onClick = {
 					quizBuilderViewModel.onSubmit()
@@ -226,66 +181,38 @@ fun QuizBuilderScreen(
 }
 
 @Composable
-fun SelectOptionScreen(
+fun QuestionOptionsList(
 	modifier: Modifier = Modifier,
 	options: List<String>,
 	selectedOptionIndex: Int,
-	onSelectionChanged: (Int) -> Unit = {},
-	onOptionsChange: (Int, String) -> Unit = { _: Int, _: String -> },
+	onSelectionChanged: (Int) -> Unit,
+	onOptionsChange: (Int, String) -> Unit,
 ) {
-//	Column(
-//		modifier = modifier,
-//		verticalArrangement = Arrangement.SpaceBetween
-//	) {
-//	val scrollState = rememberScrollState()
-
-		LazyColumn(
-			modifier = Modifier
-				.fillMaxHeight()
-//				.weight(1f)
-				.padding(bottom = 16.dp)
-//				.nestedScroll(rememberNestedScrollState())
-		) {
-			items(options.size) { index ->
-//			options.forEachIndexed { index, option ->
-//				item {
-					Row(
-						modifier = Modifier
-							.clickable {
-								onSelectionChanged(index)
-							}
-							.padding(vertical = 4.dp)
-						,
-						verticalAlignment = Alignment.CenterVertically
-					) {
-						RadioButton(
-							selected = selectedOptionIndex == index,
-							onClick = {
-								onSelectionChanged(index)
-							}
-						)
-						OutlinedTextField(
-							value = options[index],
-							onValueChange = { newValue ->
-								Log.v("QuizBuilderScreen", "onOptionsChange called: index=$index, " +
-								                           "newValue=$newValue\", item = " +
-								                           "\"$options[index]\""
-								)
-								onOptionsChange(index, newValue)
-							},
-							label = { Text("Option ${(index + 1)}") },
-//						textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Start),
-							maxLines = 2,
-							modifier = Modifier
-								.fillMaxWidth()
-								.verticalScroll(rememberScrollState())
-//							.background(Color.Transparent)
-						)
-					}
-//				}
+	LazyColumn(
+		modifier = modifier
+	) {
+		items(options.size) { index ->
+			Row(modifier = Modifier
+				.clickable {
+					onSelectionChanged(index)
+				}
+				.padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+				RadioButton(selected = selectedOptionIndex == index, onClick = {
+					onSelectionChanged(index)
+				})
+				OutlinedTextField(value = options[index],
+				                  onValueChange = { newValue ->
+					                  onOptionsChange(index, newValue)
+				                  },
+				                  label = { Text("Option ${(index + 1)}") },
+				                  maxLines = 2,
+				                  modifier = Modifier
+					                  .fillMaxWidth()
+					                  .background(Color.Transparent)
+				)
 			}
 		}
-//	}
+	}
 }
 
 @Preview(showBackground = true)

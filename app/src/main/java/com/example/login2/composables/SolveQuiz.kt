@@ -1,4 +1,4 @@
-package com.example.login2.Activities
+package com.example.login2.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,9 +31,9 @@ import com.example.login2.ViewModels.QuizViewModel
 import com.example.login2.ui.theme.TeachUp_QuizTheme
 
 @Composable
-fun QuizScreen(
+fun SolveQuizScreen(
 	quizViewModel: QuizViewModel,
-	onExitClicked : () -> Unit
+	onExitClicked: () -> Unit,
 ) {
 	val quizUiState by quizViewModel.uiState.collectAsState()
 
@@ -67,17 +67,16 @@ fun QuizScreen(
 				selectedAnswerIndex = quizUiState.selectedUserAnswer
 			)
 
+			// Navigation and Submitting Buttons
 			Row(
 				verticalAlignment = Alignment.Bottom,
-				modifier = Modifier
-					.fillMaxSize(),
+				modifier = Modifier.fillMaxSize(),
 			) {
 				if (quizUiState.currentQuestionNumber > 1) {
 					Button(
 						onClick = {
 							quizViewModel.onPreviousPressed()
-						},
-						enabled = !quizUiState.isFirstQuestion
+						}, enabled = !quizUiState.isFirstQuestion
 					) {
 						Text(text = "Previous")
 					}
@@ -89,9 +88,7 @@ fun QuizScreen(
 					Button(
 						onClick = {
 							quizViewModel.onSubmit()
-						},
-						enabled = quizUiState.isNextButtonEnabled,
-						modifier = Modifier
+						}, enabled = quizUiState.isNextButtonEnabled, modifier = Modifier
 					) {
 						Text(text = "Submit")
 					}
@@ -99,9 +96,7 @@ fun QuizScreen(
 					Button(
 						onClick = {
 							quizViewModel.onNextPressed()
-						},
-						enabled = quizUiState.isNextButtonEnabled,
-						modifier = Modifier
+						}, enabled = quizUiState.isNextButtonEnabled, modifier = Modifier
 					) {
 						Text(text = "Next")
 					}
@@ -130,21 +125,18 @@ fun QuizQuestion(
 			.padding(16.dp)
 	) {
 		Text(
-			text = questionTitle,
-			fontWeight = FontWeight.Bold,
-			fontSize = 20.sp
+			text = questionTitle, fontWeight = FontWeight.Bold, fontSize = 20.sp
 		)
 		Spacer(modifier = Modifier.height(16.dp))
 
+		// Question Options
 		Column {
 			questionOptions.forEachIndexed { index, option ->
-				QuizAnswerOption(
-					text = option,
-					isSelected = index == selectedAnswerIndex,
-					onAnswerSelected = {
-						onAnswerSelected(index)
-					}
-				)
+				QuizAnswerOption(text = option,
+				                 isSelected = index == selectedAnswerIndex,
+				                 onAnswerSelected = {
+					                 onAnswerSelected(index)
+				                 })
 				Spacer(modifier = Modifier.height(8.dp))
 			}
 		}
@@ -153,18 +145,16 @@ fun QuizQuestion(
 
 @Composable
 fun QuizAnswerOption(text: String, isSelected: Boolean, onAnswerSelected: () -> Unit) {
-	Row(
-		modifier = Modifier
-			.fillMaxWidth()
-			.background(
-				color = if (isSelected) MaterialTheme.colorScheme.primary else Color.White,
-				shape = MaterialTheme.shapes.small
-			)
-			.clip(MaterialTheme.shapes.small)
-			.clickable { onAnswerSelected() }
-			.padding(16.dp),
-		verticalAlignment = Alignment.CenterVertically
-	) {
+	Row(modifier = Modifier
+		.fillMaxWidth()
+		.background(
+			color = if (isSelected) MaterialTheme.colorScheme.primary else Color.White,
+			shape = MaterialTheme.shapes.small
+		)
+		.clip(MaterialTheme.shapes.small)
+		.clickable { onAnswerSelected() }
+		.padding(16.dp),
+	    verticalAlignment = Alignment.CenterVertically) {
 		Text(
 			text = text,
 			color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
@@ -180,6 +170,5 @@ fun QuizAnswerOption(text: String, isSelected: Boolean, onAnswerSelected: () -> 
 @Preview(showBackground = true)
 @Composable
 fun QuizPreview() {
-	TeachUp_QuizTheme {
-	}
+	TeachUp_QuizTheme { }
 }
