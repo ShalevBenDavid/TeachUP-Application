@@ -67,7 +67,6 @@ public class ProfileActivity extends AppCompatActivity {
 
             // Hide editing controls since the viewer cannot edit another user's profile
             binding.editImage.setVisibility(View.GONE);
-            binding.editTextButton.setVisibility(View.GONE);
             binding.descriptionBox.setEnabled(false);
             binding.editProfileButton.setVisibility(View.GONE);
         }
