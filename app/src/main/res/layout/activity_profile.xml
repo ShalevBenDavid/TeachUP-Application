@@ -47,15 +47,9 @@
         android:hint="Describe yourself..."
         android:minHeight="48dp"
         android:padding="10dp"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:maxLines="5"/>
 
-    <ImageView
-        android:id="@+id/edit_text_button"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:src="@drawable/edit_decription_icon"
-        android:layout_toEndOf="@id/descriptionBox"
-        android:layout_alignBottom="@id/descriptionBox" />
 
     <Button
         android:layout_width="wrap_content"

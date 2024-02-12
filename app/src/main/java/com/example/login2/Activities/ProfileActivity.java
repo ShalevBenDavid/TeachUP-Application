@@ -24,6 +24,7 @@ import com.example.login2.Utils.CustomProgressDialog;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
 import com.example.login2.databinding.ActivityProfileBinding;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -163,8 +164,20 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(UserModel user) {
                         CustomUtils.showToast(ProfileActivity.this, "Profile Updated Successfully");
-                        UserManager.getInstance().setUserModel(user);
-                        progressDialog.dismiss();
+                        userRepository.getCurrentUser(UserManager.getInstance().getUserId(), new UserRepository.FirestoreRepositoryCallback() {
+                            @Override
+                            public void onSuccess(UserModel user) {
+                                UserManager.getInstance().setUserModel(user);
+                                progressDialog.dismiss();
+
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                CustomUtils.showToast(ProfileActivity.this, "Couldn't Update the profile");
+                                progressDialog.dismiss();
+                            }
+                        });
                     }
 
                     @Override
