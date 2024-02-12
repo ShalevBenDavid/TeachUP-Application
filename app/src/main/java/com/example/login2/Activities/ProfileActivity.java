@@ -24,7 +24,6 @@ import com.example.login2.Utils.CustomProgressDialog;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
 import com.example.login2.databinding.ActivityProfileBinding;
-import com.google.firebase.firestore.auth.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +66,6 @@ public class ProfileActivity extends AppCompatActivity {
 
             // Hide editing controls since the viewer cannot edit another user's profile
             binding.editImage.setVisibility(View.GONE);
-            binding.editTextButton.setVisibility(View.GONE);
             binding.descriptionBox.setEnabled(false);
             binding.editProfileButton.setVisibility(View.GONE);
         }
@@ -79,12 +77,19 @@ public class ProfileActivity extends AppCompatActivity {
         binding.userName.setText(UserManager.getInstance().getUserName());
         binding.descriptionBox.setText(UserManager.getInstance().getUserDescription());
 
+        // Load the current user's profile picture
+        loadProfilePic(UserManager.getInstance().getCurrentUserModel().getProfilePicUrl());
+
+
         // Setup image picker for profile image editing
         binding.editImage.setOnClickListener(v -> {
             Intent photoPicker = new Intent(Intent.ACTION_PICK);
             photoPicker.setType("image/*");
             launcher.launch(photoPicker);
         });
+
+
+
 
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
@@ -101,8 +106,6 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        // Load the current user's profile picture
-        loadProfilePic(UserManager.getInstance().getCurrentUserModel().getProfilePicUrl());
 
         // Enable save button when the description is changed
         binding.descriptionBox.addTextChangedListener(new TextWatcher() {
@@ -123,7 +126,6 @@ public class ProfileActivity extends AppCompatActivity {
         // Handle profile update process
         binding.editProfileButton.setOnClickListener(v -> {
             progressDialog.show();
-            userRepository = new UserRepository();
             if (fileUri != null) {
                 // First, upload the new profile image, pass a callback to updateProfile
                 uploadProfileImage(this::updateProfile);
@@ -154,6 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void updateProfile(){
+        userRepository = new UserRepository();
         UserModel user = UserManager.getInstance().getCurrentUserModel();
         Map<String, Object> updates = new HashMap<>();
         updates.put("userDescription", binding.descriptionBox.getText().toString());
@@ -174,7 +177,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(String error) {
-                                CustomUtils.showToast(ProfileActivity.this, "Couldn't Update the profile");
+                                CustomUtils.showToast(ProfileActivity.this, "Can't display the updated profile");
                                 progressDialog.dismiss();
                             }
                         });

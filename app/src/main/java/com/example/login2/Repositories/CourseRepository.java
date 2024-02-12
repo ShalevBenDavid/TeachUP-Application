@@ -59,6 +59,7 @@ public class CourseRepository {
         reference.set(newCourse);
     }
 
+
     public Task<Boolean> doesExist(String code) {
         TaskCompletionSource<Boolean> taskCompletionSource = new TaskCompletionSource<>();
 
