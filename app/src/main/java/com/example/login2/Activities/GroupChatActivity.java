@@ -47,8 +47,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
         // On press, navigate back to the previous activity.
         binding.backButton.setOnClickListener(view -> {
-            Intent intent = new Intent(GroupChatActivity.this, MainChatActivity.class);
-            startActivity(intent);
+            finish();
         });
 
         // Initialize RecyclerView and MessageAdapter.
