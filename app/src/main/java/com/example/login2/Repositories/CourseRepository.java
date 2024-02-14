@@ -3,7 +3,9 @@ package com.example.login2.Repositories;
 import android.util.Log;
 
 import com.example.login2.Models.CourseModel;
+import com.example.login2.Models.UserModel;
 import com.example.login2.Utils.Constants;
+import com.example.login2.Utils.UserManager;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
@@ -57,6 +59,19 @@ public class CourseRepository {
         newCourse.setCourseId(reference.getId());
 
         reference.set(newCourse);
+
+        EnrollmentsRepository repository = new EnrollmentsRepository();
+        repository.enrollStudent(newCourse.getCourseId(), UserManager.getInstance().getUserId(), new EnrollmentsRepository.EnrollmentCallback() {
+            @Override
+            public void onSuccess(List<UserModel> students) {
+
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
     }
 
 

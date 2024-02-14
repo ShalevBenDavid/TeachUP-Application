@@ -69,8 +69,9 @@ public class CourseInitFragment extends DialogFragment {
                     if (validateFields(name, description)) {
                         if (logoUri != null) {
                             uploadLogo(()->registerCourse(name,description));
+                        } else{
+                            registerCourse(name, description);
                         }
-                        registerCourse(name, description);
                     }else {
                         CustomUtils.showToast(requireContext(),"No course added");
                     }
