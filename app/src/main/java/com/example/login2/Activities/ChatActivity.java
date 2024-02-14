@@ -81,9 +81,7 @@ public class ChatActivity extends AppCompatActivity {
         // Monitor the text box and update the send icon accordingly.
         binding.messageEdit.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 // Check if there's text in the text box and set the send icon accordingly.
@@ -93,10 +91,8 @@ public class ChatActivity extends AppCompatActivity {
                     binding.sendMessageIcon.setImageResource(R.drawable.send_icon_before);
                 }
             }
-
             @Override
-            public void afterTextChanged(Editable editable) {
-            }
+            public void afterTextChanged(Editable editable) {}
         });
     }
 
