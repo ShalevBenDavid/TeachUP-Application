@@ -81,7 +81,7 @@ public class MainChatActivity extends AppCompatActivity {
     private void filter(String text) {
         List<UserModel> filteredList = new ArrayList<>();
         for (UserModel student : allStudents) {
-            if (student.getUserName().toLowerCase().contains(text.toLowerCase())) {
+            if (student.getUserName().toLowerCase().startsWith(text.toLowerCase())) {
                 filteredList.add(student);
             }
         }
