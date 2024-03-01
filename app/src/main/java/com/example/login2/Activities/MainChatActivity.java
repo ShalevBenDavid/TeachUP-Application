@@ -27,9 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainChatActivity extends AppCompatActivity {
-    ActivityMainChatBinding binding;
-    StudentListAdapter studentsAdapter;
-    List <UserModel> allStudents = new ArrayList<>();
+    private ActivityMainChatBinding binding;
+    private StudentListAdapter studentsAdapter;
+    private List <UserModel> allStudents = new ArrayList<>();
+    private StudentListViewModel studentListViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,11 @@ public class MainChatActivity extends AppCompatActivity {
         studentsAdapter = new StudentListAdapter(MainChatActivity.this);
         binding.recycler.setLayoutManager(new LinearLayoutManager(this));
         binding.recycler.setAdapter(studentsAdapter);
+        studentListViewModel = new ViewModelProvider(this).get(StudentListViewModel.class);
+        studentListViewModel.getEnrolledStudents(CourseManager.getInstance().getCourseId())
+                .observe(this,students ->{
+                    studentsAdapter.setStudents(students);
+                });
 
         // Add the enrolled course students to the students adapter.
         StudentListViewModel studentListViewModel = new ViewModelProvider(this).get(StudentListViewModel.class);

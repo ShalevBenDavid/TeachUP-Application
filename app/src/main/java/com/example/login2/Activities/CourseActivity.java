@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.login2.R;
+import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.CourseManager;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
@@ -44,12 +45,17 @@ public class CourseActivity extends AppCompatActivity {
         });
 
         binding.courseCode.setText(CourseManager.getInstance().getCurrentCourse().getCourseId());
+
         binding.courseCodeCard.setOnClickListener((v) -> {
             binding.courseCodeCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.gray));
             copyToClipboard(binding.courseCode.getText().toString());
             new Handler().postDelayed(() -> binding.courseCodeCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.white)), 100);
             CustomUtils.showToast(this, "Course code copied to clipboard");
         });
+
+        if(UserManager.getInstance().getUserId() != CourseManager.getInstance().getCurrentCourse().getCourseTeacherId()){
+            binding.courseCodeCard.setVisibility(View.GONE);
+        }
 
         if (UserManager.getInstance().getCurrentUserModel().getProfilePicUrl() != null) {
             Glide.with(CourseActivity.this)
