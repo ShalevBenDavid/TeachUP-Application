@@ -76,7 +76,7 @@ public class InputCourseCodeFragment extends DialogFragment {
                     public void onSuccess(List<UserModel> students) {
                         CourseRepository courseRepository = new CourseRepository();
                         courseRepository.getCourse(code).addOnSuccessListener(courseModel->{
-                            ((CourseListActivity) requireContext()).getStudentCourseAdapter().addCourse(courseModel);
+                            ((CourseListActivity) requireContext()).getCourseListViewModel().addCourse(courseModel);
                             new Handler().postDelayed(()-> {CustomUtils.showToast(requireContext(),"Enrolled Successfully"); dismiss();},500);
                         });
                     }

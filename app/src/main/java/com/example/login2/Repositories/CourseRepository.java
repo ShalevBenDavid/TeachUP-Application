@@ -2,13 +2,18 @@ package com.example.login2.Repositories;
 
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.login2.Models.CourseModel;
+import com.example.login2.Models.MessageModel;
 import com.example.login2.Models.UserModel;
 import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.UserManager;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,7 +24,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class CourseRepository {
-    private final FirebaseFirestore db;
+    private FirebaseFirestore db;
+    private MutableLiveData<List<CourseModel>> coursesLiveData = new MutableLiveData<>();
+    private List<CourseModel> courseList = new ArrayList<>();
+
 
     public CourseRepository(){
         db = FirebaseFirestore.getInstance();
@@ -32,7 +40,6 @@ public class CourseRepository {
     public void deleteCourse(String courseId){
         db.collection(Constants.COURSE_COLLECTION).document(courseId).delete().addOnSuccessListener(aVoid->{
         });
-
     }
 
     public Task<CourseModel>  getCourse(String courseId){
@@ -48,9 +55,26 @@ public class CourseRepository {
         return taskCompletionSource.getTask();
     }
 
-    public Query getAllCoursesTaughtBy(String userId){
-        return db.collection("courses").
-                whereEqualTo("courseTeacherId",userId);
+    public LiveData<List<CourseModel>> getAllCoursesTaughtBy(String userId){
+        listenForDataChanges(userId);
+        return coursesLiveData;
+    }
+
+    private void listenForDataChanges(String userId) {
+        FirebaseFirestore.getInstance().collection(Constants.COURSE_COLLECTION)
+                .whereEqualTo("courseTeacherId",userId)
+                .addSnapshotListener((snapshot,e) ->{
+                    if(e != null){
+                        return;
+                    }
+                    if(snapshot != null) {
+                        for (DocumentChange documentChange : snapshot.getDocumentChanges()) {
+                            CourseModel course = documentChange.getDocument().toObject(CourseModel.class);
+                            courseList.add(course);
+                        }
+                    }
+                    coursesLiveData.postValue(courseList);
+                });
     }
 
     public void addCourse(CourseModel newCourse) {
@@ -64,7 +88,8 @@ public class CourseRepository {
         repository.enrollStudent(newCourse.getCourseId(), UserManager.getInstance().getUserId(), new EnrollmentsRepository.EnrollmentCallback() {
             @Override
             public void onSuccess(List<UserModel> students) {
-
+                courseList.add(newCourse);
+                coursesLiveData.postValue(courseList);
             }
 
             @Override
@@ -91,22 +116,20 @@ public class CourseRepository {
         return taskCompletionSource.getTask();
     }
 
-    public Task<List<CourseModel>> getCourses(List<String> courseIds){
+    public LiveData<List<CourseModel>> getCourses(List<String> courseIds){
         List<Task<CourseModel>> tasks = new ArrayList<>();
+
         for(String courseId: courseIds){
             tasks.add(getCourse(courseId));
         }
 
-        TaskCompletionSource<List<CourseModel>> taskCompletionSource = new TaskCompletionSource<>();
-
         Tasks.whenAllSuccess(tasks).addOnSuccessListener(courseModels ->{
-            List<CourseModel> courses = new ArrayList<>();
             for(Object model : courseModels){
-                courses.add((CourseModel) model);
+                courseList.add((CourseModel) model);
             }
-            taskCompletionSource.setResult(courses);
-        }).addOnFailureListener(taskCompletionSource::setException);
+            coursesLiveData.setValue(courseList);
+        });
 
-        return taskCompletionSource.getTask();
+        return coursesLiveData;
     }
 }

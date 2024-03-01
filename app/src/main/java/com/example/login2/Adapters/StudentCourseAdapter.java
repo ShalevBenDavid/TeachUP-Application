@@ -16,16 +16,21 @@ import com.example.login2.Models.CourseModel;
 import com.example.login2.R;
 import com.example.login2.Utils.CourseManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StudentCourseAdapter extends RecyclerView.Adapter<CourseViewHolder> {
-    Context context;
-    List<CourseModel> courses;
+    private Context context;
+    private List<CourseModel> courses = new ArrayList<>();
 
 
     public StudentCourseAdapter(Context context, List<CourseModel> courses) {
         this.context = context;
+    }
+
+    public void setCourses(List<CourseModel> courses){
         this.courses = courses;
+        notifyDataSetChanged();
     }
 
     @NonNull

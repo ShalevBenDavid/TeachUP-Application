@@ -42,15 +42,15 @@ public class CourseListActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
         userType = UserManager.getInstance().getUserType();
-        if(userType == null){
+        if (userType == null) {
             userType = getIntent().getStringExtra("type");
         }
 
         courseRepository = new CourseRepository();
         courseListViewModel = new ViewModelProvider(this).get(CourseListViewModel.class);
-        if(userType.equals(Constants.TYPE_TEACHER)){
+        if (userType.equals(Constants.TYPE_TEACHER)) {
             setupTeacherRecyclerView();
-        } else{
+        } else {
             observeStudentCourseData();
         }
         observeStudentCourseData();
@@ -76,18 +76,24 @@ public class CourseListActivity extends AppCompatActivity {
         binding.courseList.setLayoutManager(new LinearLayoutManager(this));
         studentCourseAdapter = new StudentCourseAdapter(this, courses);
         binding.courseList.setAdapter(studentCourseAdapter);
+
+        courseListViewModel.getCourses(UserManager.getInstance().getUserType())
+                .observe(this, studentCourses ->{
+                    studentCourseAdapter.setCourses(studentCourses);
+                });
     }
 
     private void setupTeacherRecyclerView() {
-        Query query = courseRepository.getAllCoursesTaughtBy(UserManager.getInstance().getCurrentUserModel().getUserId());
-        FirestoreRecyclerOptions<CourseModel> options = new FirestoreRecyclerOptions.Builder<CourseModel>()
-                .setQuery(query, CourseModel.class).build();
-
         binding.courseList.setLayoutManager(new LinearLayoutManager(this));
-        teacherCourseAdapter = new TeacherCourseAdapter(options, this);
+        teacherCourseAdapter = new TeacherCourseAdapter(this);
         binding.courseList.setAdapter(teacherCourseAdapter);
-    }
 
+        courseListViewModel.getCourses(UserManager.getInstance().getUserType())
+                .observe(this, teacherCourses -> {
+                    teacherCourseAdapter.setCourses(teacherCourses);
+                });
+
+    }
 
     private void setupFab() {
         binding.fab.setOnClickListener((v -> {
@@ -101,24 +107,8 @@ public class CourseListActivity extends AppCompatActivity {
         }));
     }
 
-    public StudentCourseAdapter getStudentCourseAdapter() {
-        return studentCourseAdapter;
+    public CourseListViewModel getCourseListViewModel() {
+        return courseListViewModel;
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (UserManager.getInstance().getUserType().equals(Constants.TYPE_TEACHER)) {
-            teacherCourseAdapter.startListening();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (UserManager.getInstance().getUserType().equals(Constants.TYPE_TEACHER)) {
-            teacherCourseAdapter.stopListening();
-        }
-    }
 }

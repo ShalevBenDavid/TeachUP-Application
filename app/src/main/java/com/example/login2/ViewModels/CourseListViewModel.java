@@ -17,7 +17,6 @@ import java.util.List;
 public class CourseListViewModel extends ViewModel {
     private MutableLiveData<List<CourseModel>> courses;
     private final CourseRepository courseRepository = new CourseRepository();
-    private MutableLiveData<String> errorMessages = new MutableLiveData<>();
     private EnrollmentsRepository enrollmentsRepository;
 
     public LiveData<List<CourseModel>> getCourses(String userType) {
@@ -27,38 +26,26 @@ public class CourseListViewModel extends ViewModel {
                 enrollmentsRepository = new EnrollmentsRepository();
                 loadStudentCourses(userType);
             } else {
-                loadTeacherCourses();
+                return getAllCoursesTaughtBy();
             }
         }
         return courses;
     }
 
-    private void loadStudentCourses(String userType) {
+    private LiveData<List<CourseModel>> loadStudentCourses(String userType) {
         enrollmentsRepository.getUserEnrollments(UserManager.getInstance().getUserId())
                 .addOnSuccessListener(ids ->{
-                    courseRepository.getCourses(ids)
-                            .addOnSuccessListener(courseList ->{
-                                courses.setValue(courseList);
-                    });
+                    LiveData<List<CourseModel>> liveDataCourses = courseRepository.getCourses(ids);
+                    liveDataCourses.observeForever(coursesList -> courses.setValue(coursesList));
                 });
+        return courses;
     }
 
-    private void loadTeacherCourses() {
-        courseRepository.getAllCoursesTaughtBy(UserManager.getInstance().getUserId())
-                .addSnapshotListener((querySnapshot, e) -> {
-                    if (e != null) {
-                        errorMessages.setValue("Error fetching courses: " + e.getMessage());
-                        return;
-                    }
+    private LiveData<List<CourseModel>> getAllCoursesTaughtBy() {
+        return courseRepository.getAllCoursesTaughtBy(UserManager.getInstance().getUserId());
+    }
 
-                    if (!(querySnapshot == null || querySnapshot.isEmpty())) {
-                        List<CourseModel> courseList = new ArrayList<>();
-                        for (DocumentSnapshot snapshot : querySnapshot.getDocuments()){
-                            courseList.add(snapshot.toObject(CourseModel.class));
-                        }
-                        courses.setValue(courseList);
-                    }
-                });
-
+    public void addCourse(CourseModel courseModel){
+        courseRepository.addCourse(courseModel);
     }
 }
