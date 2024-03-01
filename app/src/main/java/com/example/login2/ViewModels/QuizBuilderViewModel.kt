@@ -139,7 +139,7 @@ class QuizBuilderViewModel : ViewModel() {
 
 		quiz.timestamp = Timestamp.now()
 		db.collection(Constants.COURSE_COLLECTION)
-			.document(CourseManager.getInstance().currentCourse.courseId)
+			.document(CourseManager.getInstance().getCourseId())
 			.collection("quizzes")
 			.add(quiz)
 			.addOnSuccessListener { documentReference ->

@@ -49,7 +49,7 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 
 	private fun getQuizzesFromDB() {
 		firestore.collection(Constants.COURSE_COLLECTION)
-			.document(CourseManager.getInstance().currentCourse.courseId)
+			.document(CourseManager.getInstance().getCourseId())
 			.collection("quizzes")	.orderBy("timestamp", Query.Direction.DESCENDING)
 			.addSnapshotListener { value, error ->
 				if (error != null) {

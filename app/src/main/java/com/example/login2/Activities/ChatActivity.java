@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,12 +23,14 @@ import com.example.login2.Utils.UserManager;
 import com.example.login2.ViewModels.ChatViewModel;
 import com.example.login2.databinding.ActivityChatBinding;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.auth.User;
 
 
 public class ChatActivity extends AppCompatActivity {
     ActivityChatBinding binding;
     String receiverId, receiverName, chatId;
     MessageAdapter messageAdapter;
+    ChatViewModel chatViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +62,15 @@ public class ChatActivity extends AppCompatActivity {
         binding.toolbarTitle.setText(receiverName);
 
         // Initialize RecyclerView and MessageAdapter.
-        FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
-                .setQuery(ChatViewModel.getFromChat(chatId), MessageModel.class).build();
-        messageAdapter = new MessageAdapter(options, this);
+        messageAdapter = new MessageAdapter( this);
         binding.chatRecycler.setAdapter(messageAdapter);
         binding.chatRecycler.setLayoutManager(new LinearLayoutManager(this));
+        chatViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
+        chatViewModel.setChatId(getChatId(UserManager.getInstance().getUserId(), receiverId));
+        chatViewModel.getMessages().observe(this,messages -> {
+            messageAdapter.setMessages(messages);
+        });
+
 
 
         // Clicking the send message button.
@@ -112,8 +119,7 @@ public class ChatActivity extends AppCompatActivity {
         MessageModel messageModel = createMessageModel(Message);
 
         // Send message to the chat document.
-        ChatViewModel.sendToChat(messageModel,
-                chatId,
+        chatViewModel.sendMessage(messageModel,
                 new ChatRepository.ChatCallback() {
                     @Override
                     public void onSuccess() {
@@ -152,21 +158,5 @@ public class ChatActivity extends AppCompatActivity {
             logoutItem.setVisible(false);
         }
         return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (messageAdapter != null) {
-            messageAdapter.startListening();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (messageAdapter != null) {
-            messageAdapter.stopListening();
-        }
     }
 }

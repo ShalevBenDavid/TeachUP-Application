@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.login2.Adapters.MessageAdapter;
@@ -28,6 +30,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 public class GroupChatActivity extends AppCompatActivity {
     private ActivityGroupChatBinding binding;
     private MessageAdapter groupMessageAdapter;
+    private ChatViewModel chatViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +54,15 @@ public class GroupChatActivity extends AppCompatActivity {
         });
 
         // Initialize RecyclerView and MessageAdapter.
-        FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
-                .setQuery(ChatViewModel.getFromChat(getGroupChatId()),MessageModel.class).build();
-        groupMessageAdapter = new MessageAdapter(options,this);
+
+        groupMessageAdapter = new MessageAdapter(this);
         binding.groupChatRecycler.setAdapter(groupMessageAdapter);
         binding.groupChatRecycler.setLayoutManager(new LinearLayoutManager(this));
+        chatViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
+        chatViewModel.setChatId(getGroupChatId());
+        chatViewModel.getMessages().observe(this, messages -> {
+            groupMessageAdapter.setMessages(messages);
+        });
 
         // Clicking the send message button.
         binding.sendGroupMessageIcon.setOnClickListener(v -> {
@@ -95,8 +102,7 @@ public class GroupChatActivity extends AppCompatActivity {
         String groupChatId = getGroupChatId();
 
         // Send group message to the group chat document.
-        ChatViewModel.sendToChat(groupMessageModel,
-                groupChatId,
+        chatViewModel.sendMessage(groupMessageModel,
                 new ChatRepository.ChatCallback() {
             @Override
             public void onSuccess() {
@@ -142,19 +148,4 @@ public class GroupChatActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (groupMessageAdapter != null) {
-            groupMessageAdapter.startListening();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (groupMessageAdapter != null) {
-            groupMessageAdapter.stopListening();
-        }
-    }
 }

@@ -15,30 +15,28 @@ import com.example.login2.Utils.UserManager;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-public class MessageAdapter extends FirestoreRecyclerAdapter<MessageModel, MessageAdapter.MessageViewHolder> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder>{
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
     private static final int VIEW_TYPE_RECEIVED_GROUP = 3;
     private Context context;
+    private List<MessageModel> messages = new ArrayList<>();
 
-    public MessageAdapter(@NonNull FirestoreRecyclerOptions<MessageModel> options, Context context) {
-        super(options);
+    public MessageAdapter(Context context) {
         this.context = context;
     }
 
-    @Override
-    protected void onBindViewHolder(@NonNull MessageViewHolder holder, int position, @NonNull MessageModel model) {
-        if (model.getSenderId().equals(UserManager.getInstance().getUserId())) {
-            holder.bindSentMessage(model);
-        } else {
-            holder.bindReceivedMessage(model);
-        }
+    public void setMessages(List<MessageModel> messages) {
+        this.messages = messages;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == VIEW_TYPE_SENT) {
             View view = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.message_sent, parent, false);
@@ -57,15 +55,31 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<MessageModel, Messa
     }
 
     @Override
+    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
+        MessageModel message = messages.get(position);
+        if (message.getSenderId().equals(UserManager.getInstance().getUserId())) {
+            holder.bindSentMessage(message);
+        } else {
+            holder.bindReceivedMessage(message);
+        }
+    }
+
+    @Override
     public int getItemViewType(int position) {
-        if (getItem(position).getSenderId().equals(UserManager.getInstance().getUserId())) {
+        if (messages.get(position).getSenderId().equals(UserManager.getInstance().getUserId())) {
             return VIEW_TYPE_SENT;
-        } else if (getItem(position).isGroupMessage()) {
+        } else if (messages.get(position).isGroupMessage()) {
             return VIEW_TYPE_RECEIVED_GROUP;
         } else {
             return VIEW_TYPE_RECEIVED;
         }
     }
+
+    @Override
+    public int getItemCount() {
+        return messages.size();
+    }
+
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
         private final TextView userName;
