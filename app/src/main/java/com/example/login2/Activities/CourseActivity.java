@@ -53,7 +53,7 @@ public class CourseActivity extends AppCompatActivity {
             CustomUtils.showToast(this, "Course code copied to clipboard");
         });
 
-        if(UserManager.getInstance().getUserId() != CourseManager.getInstance().getCurrentCourse().getCourseTeacherId()){
+        if(!UserManager.getInstance().getUserId().equals(CourseManager.getInstance().getCurrentCourse().getCourseTeacherId())){
             binding.courseCodeCard.setVisibility(View.GONE);
         }
 

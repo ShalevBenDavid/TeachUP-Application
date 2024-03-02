@@ -69,8 +69,7 @@ public class CourseRepository {
                     }
                     if(snapshot != null) {
                         for (DocumentChange documentChange : snapshot.getDocumentChanges()) {
-                            CourseModel course = documentChange.getDocument().toObject(CourseModel.class);
-                            courseList.add(course);
+                            courseList.add(documentChange.getDocument().toObject(CourseModel.class));
                         }
                     }
                     coursesLiveData.postValue(courseList);

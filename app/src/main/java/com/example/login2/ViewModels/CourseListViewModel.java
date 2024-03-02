@@ -9,9 +9,7 @@ import com.example.login2.Repositories.CourseRepository;
 import com.example.login2.Repositories.EnrollmentsRepository;
 import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.UserManager;
-import com.google.firebase.firestore.DocumentSnapshot;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CourseListViewModel extends ViewModel {
@@ -24,7 +22,7 @@ public class CourseListViewModel extends ViewModel {
             courses = new MutableLiveData<>();
             if (userType.equals(Constants.TYPE_STUDENT)) {
                 enrollmentsRepository = new EnrollmentsRepository();
-                loadStudentCourses(userType);
+                loadStudentCourses();
             } else {
                 return getAllCoursesTaughtBy();
             }
@@ -32,13 +30,12 @@ public class CourseListViewModel extends ViewModel {
         return courses;
     }
 
-    private LiveData<List<CourseModel>> loadStudentCourses(String userType) {
+    private void loadStudentCourses() {
         enrollmentsRepository.getUserEnrollments(UserManager.getInstance().getUserId())
                 .addOnSuccessListener(ids ->{
                     LiveData<List<CourseModel>> liveDataCourses = courseRepository.getCourses(ids);
                     liveDataCourses.observeForever(coursesList -> courses.setValue(coursesList));
                 });
-        return courses;
     }
 
     private LiveData<List<CourseModel>> getAllCoursesTaughtBy() {

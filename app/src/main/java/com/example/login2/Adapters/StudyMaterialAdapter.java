@@ -16,33 +16,47 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.login2.Models.StudyMaterialModel;
 import com.example.login2.R;
+import com.example.login2.Repositories.StudyMaterialRepository;
+import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.CustomUtils;
+import com.example.login2.Utils.UserManager;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
-public class StudyMaterialAdapter extends FirestoreRecyclerAdapter<StudyMaterialModel, StudyMaterialAdapter.StudyMaterialViewHolder> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class StudyMaterialAdapter extends RecyclerView.Adapter<StudyMaterialAdapter.StudyMaterialViewHolder> {
     private Context context;
+    private List<StudyMaterialModel> studyMaterials = new ArrayList<>();
 
-    public StudyMaterialAdapter(@NonNull FirestoreRecyclerOptions<StudyMaterialModel> options, Context context) {
-        super(options);
+    public StudyMaterialAdapter(Context context) {
         this.context = context;
-    }
-
-    @Override
-    protected void onBindViewHolder(@NonNull StudyMaterialViewHolder holder, int position, @NonNull StudyMaterialModel model) {
-        holder.bindStudyMaterial(model);
-        holder.itemView.setOnClickListener(v -> {
-            CustomUtils.showToast(context, "Download Started");
-            startDownload(model.getFileUrl(), model.getTitle(), context);
-        });
-
     }
 
     @NonNull
     @Override
     public StudyMaterialViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.material_recycle_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.material_recycle_item, parent, false);
         return new StudyMaterialViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull StudyMaterialViewHolder holder, int position) {
+        Log.e("StudyMaterial", studyMaterials.get(position).getTitle());
+        holder.bindStudyMaterial(studyMaterials.get(position));
+        holder.itemView.setOnClickListener(v -> {
+            CustomUtils.showToast(context, "Download Started");
+            startDownload(studyMaterials.get(position).getFileUrl(), studyMaterials.get(position).getTitle(), context);
+        });
+
+
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return studyMaterials.size();
     }
 
     private void startDownload(String fileUrl, String title, Context context) {
@@ -57,31 +71,37 @@ public class StudyMaterialAdapter extends FirestoreRecyclerAdapter<StudyMaterial
         downloadManager.enqueue(request);
     }
 
+    public void setStudyMaterials(List<StudyMaterialModel> studyMaterials) {
+        this.studyMaterials = studyMaterials;
+        notifyDataSetChanged();
+    }
 
     public static class StudyMaterialViewHolder extends RecyclerView.ViewHolder {
         private ImageView fileType;
         private TextView fileTitle;
         private TextView fileDescription;
-        private String downloadUrl;
-
+        private ImageView deleteMaterial;
 
         public StudyMaterialViewHolder(@NonNull View itemView) {
             super(itemView);
             fileType = itemView.findViewById(R.id.materialType);
             fileTitle = itemView.findViewById(R.id.materialTitle);
             fileDescription = itemView.findViewById(R.id.materialDescription);
+            deleteMaterial = itemView.findViewById(R.id.deleteMaterial);
         }
 
-        public void bindStudyMaterial(StudyMaterialModel material){
+        public void bindStudyMaterial(StudyMaterialModel material) {
             fileTitle.setText(material.getTitle());
             fileDescription.setText(material.getDescription());
-            downloadUrl = material.getFileUrl();
-
             fileType.setImageResource(getTypeLogo(material.getFileType()));
+
+            if (UserManager.getInstance().getUserType().equals(Constants.TYPE_STUDENT)) {
+                deleteMaterial.setVisibility(View.GONE);
+            }
         }
 
         private int getTypeLogo(String fileType) {
-            switch(fileType){
+            switch (fileType) {
                 case "document":
                     return R.drawable.document_material;
                 case "image":

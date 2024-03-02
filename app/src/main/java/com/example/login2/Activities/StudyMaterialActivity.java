@@ -1,9 +1,11 @@
 package com.example.login2.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -13,6 +15,7 @@ import com.example.login2.R;
 import com.example.login2.Repositories.StudyMaterialRepository;
 import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.UserManager;
+import com.example.login2.ViewModels.StudyMaterialViewModel;
 import com.example.login2.databinding.ActivityCourseListBinding;
 import com.example.login2.databinding.ActivityStudyMaterialBinding;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -21,7 +24,7 @@ import com.google.firebase.firestore.Query;
 
 public class StudyMaterialActivity extends AppCompatActivity {
     private ActivityStudyMaterialBinding binding;
-    private StudyMaterialRepository studyMaterialRepository;
+    private StudyMaterialViewModel studyMaterialViewModel;
     private StudyMaterialAdapter adapter;
 
     @Override
@@ -30,7 +33,9 @@ public class StudyMaterialActivity extends AppCompatActivity {
         binding = ActivityStudyMaterialBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        studyMaterialRepository = new StudyMaterialRepository();
+
+        studyMaterialViewModel = new ViewModelProvider(this).get(StudyMaterialViewModel.class);
+
         if(UserManager.getInstance().getUserType().equals(Constants.TYPE_TEACHER)) {
             setupFab();
         }
@@ -39,33 +44,22 @@ public class StudyMaterialActivity extends AppCompatActivity {
 
     private void setupRecycleView() {
         binding.materialRecycler.setItemAnimator(null);
-        Query query = studyMaterialRepository.getCourseStudyMaterials();
-        FirestoreRecyclerOptions<StudyMaterialModel> options = new FirestoreRecyclerOptions.Builder<StudyMaterialModel>().setQuery(query,StudyMaterialModel.class).build();
         binding.materialRecycler.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new StudyMaterialAdapter(options,this);
+        adapter = new StudyMaterialAdapter(this);
         binding.materialRecycler.setAdapter(adapter);
+
+        studyMaterialViewModel.getStudyMaterials().observe(this,studyMaterials ->{
+            adapter.setStudyMaterials(studyMaterials);
+        });
+
     }
 
     private void setupFab() {
         binding.fab.setVisibility(View.VISIBLE);
         binding.fab.setOnClickListener((v)->{
-            UploadStudyMaterial uploadStudyMaterial = new UploadStudyMaterial();
-            uploadStudyMaterial.show(getSupportFragmentManager(),"Upload");
+            startActivity(new Intent(StudyMaterialActivity.this, UploadMaterialActivity.class));
         });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (adapter != null) {
-            adapter.stopListening();
-        }
-    }
 
 }

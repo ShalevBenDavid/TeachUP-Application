@@ -1,44 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/studyMaterialItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
-    android:layout_marginTop="10dp"
     android:layout_marginStart="15dp"
+    android:layout_marginTop="10dp"
     android:layout_marginEnd="15dp"
-    app:cardCornerRadius="30dp"
-    android:id="@+id/studyMaterialItem">
+    android:background="@color/white"
+    app:cardCornerRadius="30dp">
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/document_material"
-        android:layout_margin="10dp"
-        android:id="@+id/materialType"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/materialType"
-        android:text="Title"
-        android:layout_alignTop="@id/materialType"
-        android:layout_marginBottom="5dp"
-        android:layout_marginStart="10dp"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:id="@+id/materialTitle"/>
+        <ImageView
+            android:id="@+id/materialType"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_margin="10dp"
+            android:src="@drawable/document_material" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/materialTitle"
-        android:layout_toEndOf="@id/materialType"
-        android:layout_marginStart="10dp"
-        android:text="Study Material Description"
-        android:id="@+id/materialDescription"/>
+        <TextView
+            android:id="@+id/materialTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/materialType"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toRightOf="@id/materialType"
+            android:text="Title"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/materialDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/materialTitle"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/materialType"
+            android:text="Study Material Description" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_delete_24"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/deleteMaterial"/>
 
     </RelativeLayout>
 

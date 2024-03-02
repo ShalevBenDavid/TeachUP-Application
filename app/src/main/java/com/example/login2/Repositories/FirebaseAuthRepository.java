@@ -3,6 +3,8 @@ package com.example.login2.Repositories;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.Objects;
+
 public class FirebaseAuthRepository {
     private final FirebaseAuth firebaseAuth;
 
@@ -15,7 +17,7 @@ public class FirebaseAuthRepository {
                 if(task.isSuccessful()){
                     listener.onSuccess(firebaseAuth.getCurrentUser());
                 } else{
-                    listener.onError(task.getException().getMessage());
+                    listener.onError(Objects.requireNonNull(task.getException()).getMessage());
                 }
             });
     }
@@ -29,7 +31,7 @@ public class FirebaseAuthRepository {
             if(task.isSuccessful()){
                 listener.onSuccess(firebaseAuth.getCurrentUser());
             } else{
-                listener.onError(task.getException().getMessage());
+                listener.onError(Objects.requireNonNull(task.getException()).getMessage());
             }
         });
     }
