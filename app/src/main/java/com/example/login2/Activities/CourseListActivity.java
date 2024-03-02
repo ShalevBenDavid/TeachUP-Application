@@ -99,8 +99,8 @@ public class CourseListActivity extends AppCompatActivity {
         }));
     }
 
-    public CourseListViewModel getCourseListViewModel() {
-        return courseListViewModel;
+    public StudentCourseAdapter getStudentCourseAdapter() {
+        return studentCourseAdapter;
     }
 
 }

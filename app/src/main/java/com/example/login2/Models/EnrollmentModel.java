@@ -2,9 +2,6 @@ package com.example.login2.Models;
 
 import com.example.login2.Utils.CustomUtils;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 public class EnrollmentModel {
     private String studentId;
     private String courseId;

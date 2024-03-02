@@ -22,7 +22,7 @@ import java.util.List;
 public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.StudentListViewHolder> {
 
     private List<UserModel> students = new ArrayList<>();
-    private Context context;
+    private final Context context;
 
 
     public StudentListAdapter(Context context) {

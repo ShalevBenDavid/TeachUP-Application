@@ -11,23 +11,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.login2.Models.StudyMaterialModel;
 import com.example.login2.R;
-import com.example.login2.Repositories.StudyMaterialRepository;
 import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class StudyMaterialAdapter extends RecyclerView.Adapter<StudyMaterialAdapter.StudyMaterialViewHolder> {
-    private Context context;
+    private final Context context;
     private List<StudyMaterialModel> studyMaterials = new ArrayList<>();
 
     public StudyMaterialAdapter(Context context) {
@@ -77,10 +73,10 @@ public class StudyMaterialAdapter extends RecyclerView.Adapter<StudyMaterialAdap
     }
 
     public static class StudyMaterialViewHolder extends RecyclerView.ViewHolder {
-        private ImageView fileType;
-        private TextView fileTitle;
-        private TextView fileDescription;
-        private ImageView deleteMaterial;
+        private final ImageView fileType;
+        private final TextView fileTitle;
+        private final TextView fileDescription;
+        private final ImageView deleteMaterial;
 
         public StudyMaterialViewHolder(@NonNull View itemView) {
             super(itemView);
