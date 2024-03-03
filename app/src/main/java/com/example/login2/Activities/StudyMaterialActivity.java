@@ -37,20 +37,16 @@ public class StudyMaterialActivity extends AppCompatActivity {
     private void setupRecycleView() {
         binding.materialRecycler.setItemAnimator(null);
         binding.materialRecycler.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new StudyMaterialAdapter(this);
+        adapter = new StudyMaterialAdapter(this,studyMaterialViewModel);
         binding.materialRecycler.setAdapter(adapter);
 
-        studyMaterialViewModel.getStudyMaterials().observe(this,studyMaterials ->{
-            adapter.setStudyMaterials(studyMaterials);
-        });
+        studyMaterialViewModel.getStudyMaterials().observe(this,studyMaterials -> adapter.setStudyMaterials(studyMaterials));
 
     }
 
     private void setupFab() {
         binding.fab.setVisibility(View.VISIBLE);
-        binding.fab.setOnClickListener((v)->{
-            startActivity(new Intent(StudyMaterialActivity.this, UploadMaterialActivity.class));
-        });
+        binding.fab.setOnClickListener((v)-> startActivity(new Intent(StudyMaterialActivity.this, UploadMaterialActivity.class)));
     }
 
 

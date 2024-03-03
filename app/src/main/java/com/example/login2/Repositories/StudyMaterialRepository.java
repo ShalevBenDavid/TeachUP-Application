@@ -1,7 +1,5 @@
 package com.example.login2.Repositories;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -9,6 +7,7 @@ import com.example.login2.Models.StudyMaterialModel;
 import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.CourseManager;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -24,18 +23,31 @@ public class StudyMaterialRepository {
         db.collection(Constants.COURSE_COLLECTION)
                 .document(CourseManager.getInstance().getCurrentCourse().getCourseId())
                 .collection(Constants.STUDY_MATERIAL)
-                .addSnapshotListener((snapshot,e) ->{
-                    if(e != null){
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
                         return;
                     }
 
-                    if(snapshot != null){
-                        for(DocumentChange documentChange : snapshot.getDocumentChanges()){
-                            studyMaterials.add(documentChange.getDocument().toObject(StudyMaterialModel.class));
-                            Log.e("studyMaterial","in repo");
+                    if (snapshot != null) {
+                        for (DocumentChange documentChange : snapshot.getDocumentChanges()) {
+                            StudyMaterialModel material = documentChange.getDocument().toObject(StudyMaterialModel.class);
+
+                            switch(documentChange.getType()){
+                                case ADDED:
+                                    studyMaterials.add(documentChange.getDocument().toObject(StudyMaterialModel.class));
+                                    break;
+                                case MODIFIED:
+                                    int modifyIndex = studyMaterials.indexOf(material);
+                                    if (modifyIndex != -1) {
+                                        studyMaterials.set(modifyIndex, material);
+                                    }
+                                    break;
+                                case REMOVED:
+                                    studyMaterials.remove(material);
+                                    break;
+                            }
                         }
                     }
-                    Log.e("study size",String.valueOf(studyMaterials.size()));
                     studyMaterialsLiveData.postValue(studyMaterials);
                 });
 
@@ -43,11 +55,14 @@ public class StudyMaterialRepository {
     }
 
     public void addStudyMaterial(StudyMaterialModel studyMaterial, FirestoreCallback callback) {
-        db.collection(Constants.COURSE_COLLECTION)
+        DocumentReference newDocRef = db.collection(Constants.COURSE_COLLECTION)
                 .document(CourseManager.getInstance().getCurrentCourse().getCourseId())
                 .collection(Constants.STUDY_MATERIAL)
-                .document()
-                .set(studyMaterial).addOnCompleteListener(task -> {
+                .document();
+
+        studyMaterial.setId(newDocRef.getId());
+
+        newDocRef.set(studyMaterial).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         callback.onSuccess();
                     } else {
@@ -62,10 +77,10 @@ public class StudyMaterialRepository {
                 .collection(Constants.STUDY_MATERIAL)
                 .document(materialId)
                 .delete()
-                .addOnCompleteListener(task ->{
-                    if(task.isSuccessful()){
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
                         callback.onSuccess();
-                    } else{
+                    } else {
                         callback.onError(Objects.requireNonNull(task.getException()).getMessage());
                     }
                 });

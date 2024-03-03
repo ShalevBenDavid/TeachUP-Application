@@ -65,7 +65,7 @@ public class CourseListActivity extends AppCompatActivity {
 
     private void setupStudentRecyclerView(List<CourseModel> courses) {
         binding.courseList.setLayoutManager(new LinearLayoutManager(this));
-        studentCourseAdapter = new StudentCourseAdapter(this, courses);
+        studentCourseAdapter = new StudentCourseAdapter(this);
         binding.courseList.setAdapter(studentCourseAdapter);
 
         courseListViewModel.getCourses(UserManager.getInstance().getUserType())
