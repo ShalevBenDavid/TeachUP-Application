@@ -1,26 +1,18 @@
 package com.example.login2.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.login2.Adapters.StudyMaterialAdapter;
-import com.example.login2.Models.StudyMaterialModel;
-import com.example.login2.R;
-import com.example.login2.Repositories.StudyMaterialRepository;
 import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.UserManager;
 import com.example.login2.ViewModels.StudyMaterialViewModel;
-import com.example.login2.databinding.ActivityCourseListBinding;
 import com.example.login2.databinding.ActivityStudyMaterialBinding;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.Query;
 
 public class StudyMaterialActivity extends AppCompatActivity {
     private ActivityStudyMaterialBinding binding;

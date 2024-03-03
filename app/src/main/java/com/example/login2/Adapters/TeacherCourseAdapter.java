@@ -1,7 +1,5 @@
 package com.example.login2.Adapters;
 
-import static com.google.firebase.database.DatabaseKt.getSnapshots;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;

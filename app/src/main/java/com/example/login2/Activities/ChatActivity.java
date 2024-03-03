@@ -1,10 +1,8 @@
 package com.example.login2.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,8 +20,6 @@ import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
 import com.example.login2.ViewModels.ChatViewModel;
 import com.example.login2.databinding.ActivityChatBinding;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.firestore.auth.User;
 
 
 public class ChatActivity extends AppCompatActivity {

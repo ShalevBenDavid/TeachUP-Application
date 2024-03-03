@@ -10,7 +10,6 @@ import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.CourseManager;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;

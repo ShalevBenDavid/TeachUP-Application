@@ -1,6 +1,5 @@
 package com.example.login2.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,7 +9,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -24,7 +22,6 @@ import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
 import com.example.login2.ViewModels.ChatViewModel;
 import com.example.login2.databinding.ActivityGroupChatBinding;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 
 public class GroupChatActivity extends AppCompatActivity {

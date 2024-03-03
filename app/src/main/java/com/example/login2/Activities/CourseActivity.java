@@ -2,30 +2,22 @@ package com.example.login2.Activities;
 
 import static com.example.login2.Utils.Constants.PROFILE_OWNER;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.login2.R;
-import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.CourseManager;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
 import com.example.login2.databinding.ActivityCourseBinding;
-import com.example.login2.databinding.ActivityCourseListBinding;
-import com.google.android.material.card.MaterialCardView;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CourseActivity extends AppCompatActivity {
 

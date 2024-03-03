@@ -2,19 +2,17 @@ package com.example.login2.Activities;
 
 import static com.example.login2.Utils.Constants.USER_TYPE_KEY;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.login2.Models.UserModel;
-import com.example.login2.R;
 import com.example.login2.Repositories.FirebaseAuthRepository;
 import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.CustomProgressDialog;

@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.login2.Adapters.StudentCourseAdapter;
 import com.example.login2.Adapters.TeacherCourseAdapter;
 import com.example.login2.Models.CourseModel;
-import com.example.login2.Repositories.CourseRepository;
 import com.example.login2.Repositories.FirebaseAuthRepository;
 import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.UserManager;
