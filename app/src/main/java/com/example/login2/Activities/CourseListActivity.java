@@ -69,9 +69,7 @@ public class CourseListActivity extends AppCompatActivity {
         binding.courseList.setAdapter(studentCourseAdapter);
 
         courseListViewModel.getCourses(UserManager.getInstance().getUserType())
-                .observe(this, studentCourses ->{
-                    studentCourseAdapter.setCourses(studentCourses);
-                });
+                .observe(this, studentCourses -> studentCourseAdapter.setCourses(studentCourses));
     }
 
     private void setupTeacherRecyclerView() {
@@ -80,9 +78,7 @@ public class CourseListActivity extends AppCompatActivity {
         binding.courseList.setAdapter(teacherCourseAdapter);
 
         courseListViewModel.getCourses(UserManager.getInstance().getUserType())
-                .observe(this, teacherCourses -> {
-                    teacherCourseAdapter.setCourses(teacherCourses);
-                });
+                .observe(this, teacherCourses -> teacherCourseAdapter.setCourses(teacherCourses));
 
     }
 
