@@ -5,9 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.login2.Models.QuestionModel
 import com.example.login2.Models.Quiz
 import com.example.login2.QuizBuilderUiState
-import com.example.login2.Utils.Constants
-import com.example.login2.Utils.CourseManager
-import com.google.firebase.Timestamp
+import com.example.login2.Repositories.QuizRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +20,7 @@ class QuizBuilderViewModel : ViewModel() {
 	val uiState: StateFlow<QuizBuilderUiState> = _uiState.asStateFlow()
 
 	var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+	private val repository = QuizRepository()
 
 	private val TAG: String = QuizBuilderViewModel::class.java.simpleName
 
@@ -136,19 +135,22 @@ class QuizBuilderViewModel : ViewModel() {
 
 	fun onSubmit() {
 		quiz.questions.removeAt(quiz.questions.size - 1)
-
-		quiz.timestamp = Timestamp.now()
-		db.collection(Constants.COURSE_COLLECTION)
-			.document(CourseManager.getInstance().getCourseId())
-			.collection("quizzes")
-			.add(quiz)
-			.addOnSuccessListener { documentReference ->
+		addQuiz(quiz, object : QuizRepository.FirestoreCallback {
+			override fun onSuccess(quizzes: List<Quiz?>?) {
 				Log.d(
 					TAG,
-					"DocumentSnapshot added with ID: " + documentReference.id
+					"quiz added with title: " + quiz.quizTitle
 				)
 			}
-			.addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
+
+			override fun onError(error: String?) {
+				Log.e(TAG, "Error onSubmit.$error")
+			}
+		})
+	}
+
+	private fun addQuiz(quiz: Quiz, firestoreCallback: QuizRepository.FirestoreCallback) {
+		repository.addQuiz(quiz, firestoreCallback)
 	}
 
 	fun setQuizTitle(quizTitleInput: String) {
