@@ -1,6 +1,7 @@
 package com.example.login2.composables
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.Card
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -31,10 +33,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.login2.Models.Quiz
+import com.example.login2.R
 import com.example.login2.Utils.Constants
 import com.example.login2.Utils.UserManager
 import com.example.login2.ViewModels.QuizViewModel
@@ -55,6 +62,14 @@ fun CourseQuizzesListScreen(
 			CourseQuizzesListAppBar()
 		},
 		content = {
+			Image(
+				painter = painterResource(R.drawable.bg2),
+				contentDescription = null,
+				modifier = Modifier
+					.fillMaxSize()
+					.background(MaterialTheme.colorScheme.primaryContainer),
+				contentScale = ContentScale.FillBounds
+			)
 			Column(
 				modifier = Modifier.fillMaxSize()
 			) {
@@ -93,9 +108,12 @@ fun CourseQuizzesListAppBar(
 	modifier: Modifier = Modifier,
 ) {
 	TopAppBar(
-		title = { Text(text = "Course Quizzes") },
+		title = { Text(
+			text = "Course Quizzes",
+		) },
 		colors = TopAppBarDefaults.mediumTopAppBarColors(
-			containerColor = MaterialTheme.colorScheme.primaryContainer
+			containerColor = colorResource(id = R.color.PrimaryBlue),
+			titleContentColor = Color.White
 		),
 		modifier = modifier,
 	)
@@ -108,7 +126,7 @@ fun QuizItem(
 	modifier: Modifier = Modifier,
 ) {
 	val color by animateColorAsState(
-		targetValue = MaterialTheme.colorScheme.primaryContainer,
+		targetValue = colorResource(id = R.color.PrimaryBlue),
 		label = "",
 	)
 
@@ -130,7 +148,8 @@ fun QuizItem(
 				Text(
 					text = quiz.quizTitle,
 					style = MaterialTheme.typography.titleMedium,
-					modifier = Modifier.padding(start = 8.dp)
+					modifier = Modifier.padding(start = 8.dp),
+					color = Color.White
 				)
 				Spacer(modifier = Modifier.weight(1f))
 				Icon(

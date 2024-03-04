@@ -1,5 +1,7 @@
 package com.example.login2.composables
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,9 +27,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.login2.R
 import com.example.login2.ui.theme.TeachUp_QuizTheme
 
 @Composable
@@ -39,6 +46,14 @@ fun QuizScore(score: Int,
 			QuizScoreScreenAppBar()
 		}
 	) { innerPadding ->
+		Image(
+			painter = painterResource(R.drawable.bg2),
+			contentDescription = null,
+			modifier = Modifier
+				.fillMaxSize()
+				.background(MaterialTheme.colorScheme.primaryContainer),
+			contentScale = ContentScale.FillBounds
+		)
 		Column (
 			modifier = Modifier
 				.padding(innerPadding)
@@ -60,7 +75,8 @@ fun QuizScoreScreenAppBar(
 ) {	TopAppBar(
 	title = {Text(text = "Quiz Score")},
 	colors = TopAppBarDefaults.mediumTopAppBarColors(
-		containerColor = MaterialTheme.colorScheme.primaryContainer
+		containerColor = colorResource(id = R.color.PrimaryBlue),
+		titleContentColor = Color.White
 	),
 	modifier = modifier,
 )
@@ -81,7 +97,7 @@ fun ExitButton(onExitClicked: () -> Unit) {
 		onClick = onExitClicked,
 		modifier = Modifier
 			.padding(16.dp),
-//		colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+		colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.PrimaryBlue))
 	) {
 		Row(
 			modifier = Modifier
