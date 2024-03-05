@@ -172,6 +172,8 @@ public class ProfileActivity extends AppCompatActivity {
                             public void onSuccess(UserModel user) {
                                 UserManager.getInstance().setUserModel(user);
                                 progressDialog.dismiss();
+                                setResult(RESULT_OK);
+                                finish();
 
                             }
 
@@ -194,7 +196,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void loadProfilePic(String imageUrl){
         Glide.with(ProfileActivity.this)
                 .load(imageUrl)
-                .placeholder(R.drawable.course_logo_placeholder)
+                .placeholder(R.drawable.profile_place_holder)
                 .into(binding.profileImage);
     }
 }
