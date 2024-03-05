@@ -1,14 +1,11 @@
 package com.example.login2.ViewModels
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import com.example.login2.Models.QuestionModel
 import com.example.login2.Models.Quiz
 import com.example.login2.QuizUiState
-import com.example.login2.Utils.Constants
-import com.example.login2.Utils.CourseManager
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.example.login2.Repositories.QuizRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,12 +21,11 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 	val uiState: StateFlow<QuizUiState> = _uiState.asStateFlow()
 
 	private val TAG: String = QuizViewModel::class.java.simpleName
-	private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-	var query: Query = firestore.collection("quizzes")
+	private val repository = QuizRepository()
 
 	private val _quizzes = MutableStateFlow<List<Quiz>>(emptyList())
 	val quizzes: StateFlow<List<Quiz>> = _quizzes.asStateFlow()
-
+	private val quizzesLiveData: LiveData<List<Quiz>> = repository.getCourseQuizzes()
 
 	private var currentQuestionIndex = 0
 	// this list will contain the answers selected by the user for each question. + 1 for past
@@ -44,30 +40,13 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 			isQuizDone = false
 		)
 
-		getQuizzesFromDB()
+		quizzesLiveData.observeForever { fetchedQuizzes ->
+			_quizzes.value = fetchedQuizzes
+		}
 	}
 
-	private fun getQuizzesFromDB() {
-		firestore.collection(Constants.COURSE_COLLECTION)
-			.document(CourseManager.getInstance().getCourseId())
-			.collection("quizzes")	.orderBy("timestamp", Query.Direction.DESCENDING)
-			.addSnapshotListener { value, error ->
-				if (error != null) {
-					Log.e(TAG, "Error getting documents.", error)
-					return@addSnapshotListener
-				}
-
-				val fetchedQuizzes = mutableListOf<Quiz>()
-				for (document in value!!) {
-					val quizMap = document.data as MutableMap<String, Any>
-					val quiz = Quiz(
-						quizTitle = quizMap["quizTitle"] as String,
-						questions = convertMapToQuiz(quizMap["questions"] as List<Map<String, Any>>)
-					)
-					fetchedQuizzes.add(quiz)
-				}
-				_quizzes.value = fetchedQuizzes
-			}
+	fun getQuizzes(): LiveData<List<Quiz>> {
+		return repository.getCourseQuizzes()
 	}
 
 	fun onNextPressed() {
@@ -122,6 +101,8 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 				isQuizDone = true
 			)
 		}
+
+		Log.v(TAG, "quiz submitted")
 	}
 
 	private fun resetQuiz() {
@@ -146,23 +127,6 @@ class QuizViewModel(quiz_: Quiz = Quiz()) : ViewModel() {
 		}
 
 		return score
-	}
-
-
-	private fun convertMapToQuiz(questionsList: List<Map<String, Any>>): MutableList<QuestionModel> {
-		val quiz: MutableList<QuestionModel> = mutableListOf()
-
-		questionsList.forEach { questionMap ->
-			val question = QuestionModel(
-				question = questionMap["question"] as String,
-				options = questionMap["options"] as MutableList<String>,
-				correctAnswer = (questionMap["correctAnswer"] as Long).toInt() // Assuming correctAnswer is of type Long
-			)
-
-			quiz.add(question)
-		}
-
-		return quiz
 	}
 
 	fun setQuiz(newQuiz: Quiz) {

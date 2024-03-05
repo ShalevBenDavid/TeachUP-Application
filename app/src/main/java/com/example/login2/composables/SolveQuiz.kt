@@ -1,5 +1,6 @@
 package com.example.login2.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -23,10 +24,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.login2.R
 import com.example.login2.ViewModels.QuizViewModel
 import com.example.login2.ui.theme.TeachUp_QuizTheme
 
@@ -35,6 +40,14 @@ fun SolveQuizScreen(
 	quizViewModel: QuizViewModel,
 	onExitClicked: () -> Unit,
 ) {
+	Image(
+		painter = painterResource(R.drawable.bg2),
+		contentDescription = null,
+		modifier = Modifier
+			.fillMaxSize()
+			.background(MaterialTheme.colorScheme.primaryContainer),
+		contentScale = ContentScale.FillBounds
+	)
 	val quizUiState by quizViewModel.uiState.collectAsState()
 
 	if (!quizUiState.isQuizDone) {
@@ -52,7 +65,7 @@ fun SolveQuizScreen(
 			Text(
 				modifier = Modifier
 					.clip(MaterialTheme.shapes.medium)
-					.background(MaterialTheme.colorScheme.surfaceTint)
+//					.background(MaterialTheme.colorScheme.surfaceTint)
 					.padding(horizontal = 10.dp, vertical = 4.dp)
 					.align(alignment = Alignment.End),
 				text = "${quizUiState.currentQuestionNumber}/${quizUiState.quizNumberOfQuestions}",
@@ -121,7 +134,7 @@ fun QuizQuestion(
 ) {
 	Column(
 		modifier = Modifier
-			.background(MaterialTheme.colorScheme.background)
+//			.background(MaterialTheme.colorScheme.background)
 			.padding(16.dp)
 	) {
 		Text(
@@ -148,7 +161,9 @@ fun QuizAnswerOption(text: String, isSelected: Boolean, onAnswerSelected: () -> 
 	Row(modifier = Modifier
 		.fillMaxWidth()
 		.background(
-			color = if (isSelected) MaterialTheme.colorScheme.primary else Color.White,
+			color = if (isSelected) MaterialTheme.colorScheme.primary else
+				colorResource(id = R.color.PrimaryBlue)
+			,
 			shape = MaterialTheme.shapes.small
 		)
 		.clip(MaterialTheme.shapes.small)
@@ -157,7 +172,7 @@ fun QuizAnswerOption(text: String, isSelected: Boolean, onAnswerSelected: () -> 
 	    verticalAlignment = Alignment.CenterVertically) {
 		Text(
 			text = text,
-			color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+			color = Color.White
 		)
 		Spacer(modifier = Modifier.weight(1f))
 		if (isSelected) {

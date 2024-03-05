@@ -1,6 +1,7 @@
 package com.example.login2.composables
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -29,9 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.login2.R
 import com.example.login2.ViewModels.QuizBuilderViewModel
 import com.example.login2.ui.theme.TeachUp_QuizTheme
 
@@ -57,7 +62,8 @@ fun QuizBuilderAppBar(
 	TopAppBar(
 		title = { Text(text = "Quiz Builder") },
 		colors = TopAppBarDefaults.mediumTopAppBarColors(
-			containerColor = MaterialTheme.colorScheme.primaryContainer
+			containerColor = colorResource(id = R.color.PrimaryBlue),
+			titleContentColor = Color.White
 		),
 		modifier = modifier,
 	)
@@ -70,7 +76,6 @@ fun QuizBuilderScreen(
 	onSubmitQuizClicked: () -> Unit,
 ) {
 	val quizBuilderUiState by quizBuilderViewModel.uiState.collectAsState()
-
 	Column(
 		modifier = Modifier
 			.fillMaxSize()

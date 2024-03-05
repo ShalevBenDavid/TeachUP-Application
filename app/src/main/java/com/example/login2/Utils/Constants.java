@@ -18,4 +18,5 @@ public final class Constants {
     public static final String CHAT_REPOSITORY = "chats";
     public static final String PROFILE_OWNER = "profileOwner";
     public static final String USER_MODEL ="userModel";
+    public static final String QUIZZES_COLLECTION ="quizzes";
 }

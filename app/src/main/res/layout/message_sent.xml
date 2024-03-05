@@ -6,6 +6,7 @@
     android:gravity="end">
 
     <RelativeLayout
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
@@ -15,22 +16,25 @@
             android:id="@+id/textViewSentMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="hey"
             android:textColor="@color/white"
             android:background="@drawable/rounded_corner_sent"
             android:textSize="20sp"
-            android:padding="12dp"
+            android:padding="15dp"
             android:layout_marginStart="5dp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="20dp"/>
 
         <TextView
             android:id="@+id/messageTime"
             android:layout_width="wrap_content"
+            android:text="17:17"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@id/textViewSentMessage"
             android:layout_alignBottom="@id/textViewSentMessage"
+            android:layout_alignEnd="@id/textViewSentMessage"
             android:textColor="@color/white"
             android:textSize="11sp"
-            android:padding="3dp" />
+            android:padding="3dp"
+            android:paddingEnd="8dp"/>
 
     </RelativeLayout>
 

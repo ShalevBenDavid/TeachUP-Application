@@ -27,7 +27,7 @@
             android:textColor="@color/black"
             android:background="@drawable/rounded_corner_received"
             android:textSize="20sp"
-            android:padding="12dp"
+            android:padding="15dp"
             android:layout_marginStart="5dp"
             android:layout_marginBottom="8dp"/>
 
@@ -39,7 +39,8 @@
             android:layout_alignBottom="@id/textViewReceivedMessage"
             android:textColor="@color/black"
             android:textSize="11sp"
-            android:padding="3dp" />
+            android:padding="3dp"
+            android:paddingEnd="8dp"/>
 
 
     </RelativeLayout>
