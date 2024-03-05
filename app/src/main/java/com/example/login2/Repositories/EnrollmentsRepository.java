@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.login2.Models.EnrollmentModel;
 import com.example.login2.Models.UserModel;
 import com.example.login2.Utils.Constants;
+import com.example.login2.Utils.UserManager;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.DocumentReference;
@@ -79,7 +80,13 @@ public class EnrollmentsRepository {
 
             for (DocumentSnapshot snapshot : document) {
                 String studentId = snapshot.getString("studentId");
+
                 if (studentId != null) {
+
+                    if(studentId.equals(UserManager.getInstance().getUserId())){
+                        continue;
+                    }
+
                     db.collection(Constants.USERS_COLLECTION).document(studentId)
                             .get().addOnSuccessListener(studentDoc -> {
                                 if (studentDoc.exists()) {

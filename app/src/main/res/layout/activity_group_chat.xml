@@ -59,6 +59,7 @@
             android:minHeight="50dp"
             android:layout_toStartOf="@id/sendGroupMessageIcon"
             android:padding="10dp"
+            android:maxLength="4096"
             android:maxLines="2"
             android:scrollbars="vertical"
             android:background="@drawable/edit_style_box"/>

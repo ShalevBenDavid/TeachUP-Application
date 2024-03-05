@@ -27,43 +27,15 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityWelcomeBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
+        setContentView(binding.getRoot());
 
-
-        auth = new FirebaseAuthRepository();
-        if(auth.getCurrentUser() != null){
-            setCurrentUser();
-        }
         setupUserCards();
         setupContinueButton();
-    }
-
-    private void setCurrentUser() {
-        getLastUserType();
-        UserManager.getInstance().setUserModel(auth.getUid(),
-                type, new UserManager.UserManagerCallback() {
-                    @Override
-                    public void onUserLoaded(UserModel user) {
-                        skipLogin();
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        Log.e("error",error);
-                    }
-                });
     }
 
     private void getLastUserType() {
         SharedPreferences preferences = getSharedPreferences(Constants.SHARED_PREFS_FILE,MODE_PRIVATE);
         type = preferences.getString(Constants.USER_TYPE_KEY,"student");
-    }
-
-    private void skipLogin() {
-        Intent intent = new Intent(WelcomeActivity.this, CourseListActivity.class);
-        startActivity(intent);
-        finish();
     }
 
     private void setupContinueButton() {
