@@ -41,29 +41,32 @@ fun QuizScore(score: Int,
               quizNumberOfQuestions: Int,
               onExitClicked: () -> Unit
 ) {
-	Scaffold(
-		topBar = {
-			QuizScoreScreenAppBar()
-		}
-	) { innerPadding ->
-		Image(
-			painter = painterResource(R.drawable.bg2),
-			contentDescription = null,
-			modifier = Modifier
-				.fillMaxSize()
-				.background(MaterialTheme.colorScheme.primaryContainer),
-			contentScale = ContentScale.FillBounds
-		)
-		Column (
-			modifier = Modifier
-				.padding(innerPadding)
-				.fillMaxSize()
-		) {
-			QuizScoreScreen(score,
-			                quizNumberOfQuestions,
+	TeachUp_QuizTheme {
+		Scaffold(
+			topBar = {
+				QuizScoreScreenAppBar()
+			}
+		) { innerPadding ->
+			Image(
+				painter = painterResource(R.drawable.bg2),
+				contentDescription = null,
+				modifier = Modifier
+					.fillMaxSize()
+					.background(MaterialTheme.colorScheme.primaryContainer),
+				contentScale = ContentScale.FillBounds
 			)
-			Spacer(modifier = Modifier.weight(1f))
-			ExitButton(onExitClicked)
+			Column(
+				modifier = Modifier
+					.padding(innerPadding)
+					.fillMaxSize()
+			) {
+				QuizScoreScreen(
+					score,
+					quizNumberOfQuestions,
+				)
+				Spacer(modifier = Modifier.weight(1f))
+				ExitButton(onExitClicked)
+			}
 		}
 	}
 }

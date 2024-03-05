@@ -55,51 +55,57 @@ fun CourseQuizzesListScreen(
 	quizViewModel: QuizViewModel = viewModel(),
 ) {
 	val quizzes by quizViewModel.quizzes.collectAsState()
-
-	Scaffold(
-		modifier = modifier,
-		topBar = {
-			CourseQuizzesListAppBar()
-		},
-		content = {
-			Image(
-				painter = painterResource(R.drawable.bg2),
-				contentDescription = null,
-				modifier = Modifier
-					.fillMaxSize()
-					.background(MaterialTheme.colorScheme.primaryContainer),
-				contentScale = ContentScale.FillBounds
-			)
-			Column(
-				modifier = Modifier.fillMaxSize()
-			) {
-				LazyColumn(
-					contentPadding = it, modifier = Modifier.padding(horizontal = 8.dp)
+	TeachUp_QuizTheme {
+		Scaffold(
+			modifier = modifier,
+			topBar = {
+				CourseQuizzesListAppBar()
+			},
+			content = {
+				Image(
+					painter = painterResource(R.drawable.bg2),
+					contentDescription = null,
+					modifier = Modifier
+						.fillMaxSize()
+						.background(MaterialTheme.colorScheme.primaryContainer),
+					contentScale = ContentScale.FillBounds
+				)
+				Column(
+					modifier = Modifier.fillMaxSize()
 				) {
-					items(quizzes) { quiz ->
-						QuizItem(
-							onClicked = onClicked, quiz = quiz, modifier = Modifier.padding(8.dp)
-						)
-					}
-				}
-
-				if (UserManager.getInstance().userType == Constants.TYPE_TEACHER) {
-					Spacer(modifier = Modifier.weight(1f))
-
-					FloatingActionButton(
-						onClick = {
-							onAddQuizClicked()
-						},
-						modifier = Modifier
-							.align(Alignment.End)
-							.absoluteOffset(x = (-32).dp, y = (-32).dp)
+					LazyColumn(
+						contentPadding = it, modifier = Modifier.padding(horizontal = 8.dp)
 					) {
-						Icon(imageVector = Icons.Default.Add, contentDescription = "Add new quiz")
+						items(quizzes) { quiz ->
+							QuizItem(
+								onClicked = onClicked, quiz = quiz, modifier = Modifier.padding(8.dp)
+							)
+						}
+					}
+
+					if (UserManager.getInstance().userType == Constants.TYPE_TEACHER) {
+						Spacer(modifier = Modifier.weight(1f))
+
+						FloatingActionButton(
+							onClick = {
+								onAddQuizClicked()
+							},
+							containerColor = MaterialTheme.colorScheme.primaryContainer,
+							modifier = Modifier
+								.align(Alignment.End)
+								.absoluteOffset(x = (-32).dp, y = (-32).dp)
+						) {
+							Icon(
+								imageVector = Icons.Default.Add,
+								contentDescription = "Add new quiz",
+							)
+						}
 					}
 				}
 			}
-		}
-	)
+		)
+	}
+
 }
 
 @Composable
@@ -155,7 +161,7 @@ fun QuizItem(
 				Icon(
 					imageVector = Icons.Filled.ArrowForwardIos,
 					contentDescription = "",
-					tint = MaterialTheme.colorScheme.secondary
+					tint = MaterialTheme.colorScheme.onPrimary
 				)
 			}
 		}
