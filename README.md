@@ -8,11 +8,6 @@ TeachUp was made for students and teacher alike and acts as an interface for cou
 
 ## Key Features
 
-signup and signin
-
-
-## Features
-
 - ### Signup and Signin
   Users can create a personal account and choose their user type.
 - ### Quizzes
