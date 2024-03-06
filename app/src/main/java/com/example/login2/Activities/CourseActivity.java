@@ -82,6 +82,10 @@ public class CourseActivity extends AppCompatActivity {
         binding.quizActivity.setOnClickListener(v -> {
             startActivity(new Intent(CourseActivity.this, ComposeCourseQuizzesActivity.class));
         });
+
+        binding.courseList.setOnClickListener(v->{
+            finish();
+        });
     }
 
     private void copyToClipboard(String string) {
