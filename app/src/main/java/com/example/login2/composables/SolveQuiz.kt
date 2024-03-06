@@ -40,88 +40,90 @@ fun SolveQuizScreen(
 	quizViewModel: QuizViewModel,
 	onExitClicked: () -> Unit,
 ) {
-	Image(
-		painter = painterResource(R.drawable.bg2),
-		contentDescription = null,
-		modifier = Modifier
-			.fillMaxSize()
-			.background(MaterialTheme.colorScheme.primaryContainer),
-		contentScale = ContentScale.FillBounds
-	)
-	val quizUiState by quizViewModel.uiState.collectAsState()
-
-	if (!quizUiState.isQuizDone) {
-		Column(
+	TeachUp_QuizTheme {
+		Image(
+			painter = painterResource(R.drawable.bg2),
+			contentDescription = null,
 			modifier = Modifier
 				.fillMaxSize()
-				.padding(16.dp)
-		) {
-			LinearProgressIndicator(
-				progress = quizUiState.currentQuestionNumber / quizUiState.quizNumberOfQuestions.toFloat(),
-				modifier = Modifier
-					.fillMaxWidth()
-					.padding(bottom = 16.dp),
-			)
-			Text(
-				modifier = Modifier
-					.clip(MaterialTheme.shapes.medium)
-//					.background(MaterialTheme.colorScheme.surfaceTint)
-					.padding(horizontal = 10.dp, vertical = 4.dp)
-					.align(alignment = Alignment.End),
-				text = "${quizUiState.currentQuestionNumber}/${quizUiState.quizNumberOfQuestions}",
-				style = MaterialTheme.typography.titleMedium,
-				color = MaterialTheme.colorScheme.onPrimary
-			)
+				.background(MaterialTheme.colorScheme.primaryContainer),
+			contentScale = ContentScale.FillBounds
+		)
+		val quizUiState by quizViewModel.uiState.collectAsState()
 
-			QuizQuestion(
-				questionTitle = quizUiState.currentQuestionTitle,
-				questionOptions = quizUiState.currentQuestionOptions,
-				onAnswerSelected = { quizViewModel.updateUserAnswer(it) },
-				selectedAnswerIndex = quizUiState.selectedUserAnswer
-			)
-
-			// Navigation and Submitting Buttons
-			Row(
-				verticalAlignment = Alignment.Bottom,
-				modifier = Modifier.fillMaxSize(),
+		if (!quizUiState.isQuizDone) {
+			Column(
+				modifier = Modifier
+					.fillMaxSize()
+					.padding(16.dp)
 			) {
-				if (quizUiState.currentQuestionNumber > 1) {
-					Button(
-						onClick = {
-							quizViewModel.onPreviousPressed()
-						}, enabled = !quizUiState.isFirstQuestion
-					) {
-						Text(text = "Previous")
+				LinearProgressIndicator(
+					progress = quizUiState.currentQuestionNumber / quizUiState.quizNumberOfQuestions.toFloat(),
+					modifier = Modifier
+						.fillMaxWidth()
+						.padding(bottom = 16.dp),
+				)
+				Text(
+					modifier = Modifier
+						.clip(MaterialTheme.shapes.medium)
+						//					.background(MaterialTheme.colorScheme.surfaceTint)
+						.padding(horizontal = 10.dp, vertical = 4.dp)
+						.align(alignment = Alignment.End),
+					text = "${quizUiState.currentQuestionNumber}/${quizUiState.quizNumberOfQuestions}",
+					style = MaterialTheme.typography.titleMedium,
+					color = MaterialTheme.colorScheme.onPrimary
+				)
+
+				QuizQuestion(
+					questionTitle = quizUiState.currentQuestionTitle,
+					questionOptions = quizUiState.currentQuestionOptions,
+					onAnswerSelected = { quizViewModel.updateUserAnswer(it) },
+					selectedAnswerIndex = quizUiState.selectedUserAnswer
+				)
+
+				// Navigation and Submitting Buttons
+				Row(
+					verticalAlignment = Alignment.Bottom,
+					modifier = Modifier.fillMaxSize(),
+				) {
+					if (quizUiState.currentQuestionNumber > 1) {
+						Button(
+							onClick = {
+								quizViewModel.onPreviousPressed()
+							}, enabled = !quizUiState.isFirstQuestion
+						) {
+							Text(text = "Previous")
+						}
 					}
-				}
-				Spacer(modifier = Modifier.weight(1f))
+					Spacer(modifier = Modifier.weight(1f))
 
 
-				if (quizUiState.isLastQuestion) {
-					Button(
-						onClick = {
-							quizViewModel.onSubmit()
-						}, enabled = quizUiState.isNextButtonEnabled, modifier = Modifier
-					) {
-						Text(text = "Submit")
-					}
-				} else {
-					Button(
-						onClick = {
-							quizViewModel.onNextPressed()
-						}, enabled = quizUiState.isNextButtonEnabled, modifier = Modifier
-					) {
-						Text(text = "Next")
+					if (quizUiState.isLastQuestion) {
+						Button(
+							onClick = {
+								quizViewModel.onSubmit()
+							}, enabled = quizUiState.isNextButtonEnabled, modifier = Modifier
+						) {
+							Text(text = "Submit")
+						}
+					} else {
+						Button(
+							onClick = {
+								quizViewModel.onNextPressed()
+							}, enabled = quizUiState.isNextButtonEnabled, modifier = Modifier
+						) {
+							Text(text = "Next")
+						}
 					}
 				}
 			}
+		} else {
+			QuizScore(
+				score = quizViewModel.getScore(),
+				quizNumberOfQuestions = quizUiState.quizNumberOfQuestions,
+				onExitClicked
+			)
 		}
-	} else {
-		QuizScore(
-			score = quizViewModel.getScore(),
-			quizNumberOfQuestions = quizUiState.quizNumberOfQuestions,
-			onExitClicked
-		)
 	}
 }
 
@@ -161,9 +163,8 @@ fun QuizAnswerOption(text: String, isSelected: Boolean, onAnswerSelected: () -> 
 	Row(modifier = Modifier
 		.fillMaxWidth()
 		.background(
-			color = if (isSelected) MaterialTheme.colorScheme.primary else
-				colorResource(id = R.color.PrimaryBlue)
-			,
+			color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else
+				colorResource(id = R.color.PrimaryBlue),
 			shape = MaterialTheme.shapes.small
 		)
 		.clip(MaterialTheme.shapes.small)

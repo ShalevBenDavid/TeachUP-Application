@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,11 +46,13 @@ import com.example.login2.ui.theme.TeachUp_QuizTheme
 fun QuizBuilder(
 	onSubmitQuizClicked: () -> Unit,
 ) {
-	Scaffold(topBar = {
-		QuizBuilderAppBar()
-	}) { innerPadding ->
-		Column(modifier = Modifier.padding(innerPadding)) {
-			QuizBuilderScreen(onSubmitQuizClicked = onSubmitQuizClicked)
+	TeachUp_QuizTheme {
+		Scaffold(topBar = {
+			QuizBuilderAppBar()
+		}) { innerPadding ->
+			Column(modifier = Modifier.padding(innerPadding)) {
+				QuizBuilderScreen(onSubmitQuizClicked = onSubmitQuizClicked)
+			}
 		}
 	}
 }
