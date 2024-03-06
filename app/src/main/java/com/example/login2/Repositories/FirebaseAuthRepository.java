@@ -1,5 +1,7 @@
 package com.example.login2.Repositories;
 
+import android.util.Patterns;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -36,6 +38,23 @@ public class FirebaseAuthRepository {
         });
     }
 
+    public void sendResetPasswordEmail(String email,AuthResultListener listener){
+        if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            listener.onSuccess(null);
+                        } else {
+                            String errorMessage = Objects.requireNonNull(task.getException()).getMessage();
+                            listener.onError(errorMessage);
+                        }
+                    });
+        } else {
+          listener.onError("Email address format is invalid");
+        }
+
+    }
+
     public FirebaseUser getCurrentUser(){
         return firebaseAuth.getCurrentUser();
     }
@@ -49,8 +68,6 @@ public class FirebaseAuthRepository {
 
         void onError(String message);
     }
-
-
 }
 
 

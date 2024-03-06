@@ -2,8 +2,10 @@ package com.example.login2.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -22,6 +24,8 @@ import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UriUtils;
 import com.example.login2.ViewModels.StudyMaterialViewModel;
 import com.example.login2.databinding.ActivityUploadMaterialBinding;
+
+import java.io.IOException;
 
 public class UploadMaterialActivity extends AppCompatActivity {
     private ActivityUploadMaterialBinding binding;
@@ -51,9 +55,22 @@ public class UploadMaterialActivity extends AppCompatActivity {
                 , result -> {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
-
                         if (data == null) return;
+
                         fileUri = data.getData();
+
+                        long fileSize = getFileSize(fileUri);
+                        long maxSize = 20 * 1024 * 1024; // 20 MB in bytes
+                        if (fileSize <= maxSize) {
+
+                            binding.uploadLogo.setImageResource(R.drawable.cloud_check_svgrepo_com);
+                            studyMaterial.setFileType(UriUtils.getFileType(this, fileUri));
+                        } else {
+                            fileUri = null; // Reset fileUri as the file is too large
+                            CustomUtils.showToast(this, "File is too large. Max allowed size is 20MB.");
+                            return;
+                        }
+
                         binding.uploadLogo.setImageResource(R.drawable.cloud_check_svgrepo_com);
                         studyMaterial.setFileType(UriUtils.getFileType(this,fileUri));
                     } else {
@@ -63,7 +80,6 @@ public class UploadMaterialActivity extends AppCompatActivity {
 
         binding.uploadButton.setOnClickListener(v ->{
             if(validateFields()){
-                Log.e("here uploading","uploading");
                 uploadFile(this::addStudyMaterial);
             }
         });
@@ -150,5 +166,12 @@ public class UploadMaterialActivity extends AppCompatActivity {
         return flag;
     }
 
-
+    private long getFileSize(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+        cursor.moveToFirst();
+        long size = cursor.getLong(sizeIndex);
+        cursor.close();
+        return size;
+    }
 }

@@ -31,8 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
+        setContentView(binding.getRoot());
 
         auth = new FirebaseAuthRepository();
         progressDialog = new CustomProgressDialog(this);
@@ -61,6 +60,11 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this,SignUpActivity.class);
             intent.putExtra("type",type);
             startActivity(intent);
+        });
+
+        binding.forgotPassword.setOnClickListener(v ->{
+            PasswordReset dialogFragment = new PasswordReset();
+            dialogFragment.show(getSupportFragmentManager(), "emailEntry");
         });
     }
 
