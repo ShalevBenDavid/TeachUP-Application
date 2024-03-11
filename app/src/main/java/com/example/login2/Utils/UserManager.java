@@ -37,7 +37,6 @@ public class UserManager {
                 type = userType;
                 userManagerCallback.onUserLoaded(user);
                 Log.d("UserManager", "currentUser set: " + user);
-
             }
 
             @Override
@@ -62,6 +61,10 @@ public class UserManager {
     }
     public String getUserId(){
         return currentUser.getUserId();
+    }
+
+    public void setUserModel(UserModel user) {
+        this.currentUser = user;
     }
 
     public interface UserManagerCallback {

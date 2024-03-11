@@ -5,6 +5,11 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -12,13 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.example.login2.Models.CourseModel;
 import com.example.login2.Models.UserModel;
@@ -69,8 +67,9 @@ public class CourseInitFragment extends DialogFragment {
                     if (validateFields(name, description)) {
                         if (logoUri != null) {
                             uploadLogo(()->registerCourse(name,description));
+                        } else{
+                            registerCourse(name, description);
                         }
-                        registerCourse(name, description);
                     }else {
                         CustomUtils.showToast(requireContext(),"No course added");
                     }

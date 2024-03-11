@@ -23,6 +23,10 @@ public class CourseManager {
         return currentCourse;
     }
 
+    public String getCourseId(){
+        return currentCourse.getCourseId();
+    }
+
     public void setCurrentCourse(CourseModel currentCourse) {
         this.currentCourse = currentCourse;
     }

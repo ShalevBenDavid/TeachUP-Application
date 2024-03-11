@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/gradient_background_list"
+    android:background="@drawable/bg2"
     tools:context=".Activities.MainChatActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -22,8 +22,7 @@
         android:src="@drawable/group_icon"
         android:contentDescription="Group image"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-        />
+        android:layout_marginBottom="20dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -38,15 +37,26 @@
         android:shadowColor="@android:color/black"
         android:shadowDx="1"
         android:shadowDy="1"
-        android:shadowRadius="1"
-        />
+        android:shadowRadius="1" />
+
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:hint="Search"
+        android:padding="12dp"
+        android:drawablePadding="8dp"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:singleLine="true" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        >
+        android:layout_marginTop="16dp">
 
     </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>

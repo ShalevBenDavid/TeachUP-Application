@@ -1,25 +1,22 @@
 package com.example.login2.Repositories;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.login2.Models.EnrollmentModel;
 import com.example.login2.Models.UserModel;
 import com.example.login2.Utils.Constants;
+import com.example.login2.Utils.UserManager;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Objects;
 
 public class EnrollmentsRepository {
     private final FirebaseFirestore db;
@@ -61,7 +58,7 @@ public class EnrollmentsRepository {
                         }
                         taskCompletionSource.setResult(courseIds);
                     } else {
-                        taskCompletionSource.setException(task.getException());
+                        taskCompletionSource.setException(Objects.requireNonNull(task.getException()));
                     }
                 });
         return taskCompletionSource.getTask();
@@ -83,13 +80,21 @@ public class EnrollmentsRepository {
 
             for (DocumentSnapshot snapshot : document) {
                 String studentId = snapshot.getString("studentId");
-                db.collection(Constants.USERS_COLLECTION).document(studentId)
-                        .get().addOnSuccessListener(studentDoc -> {
-                            if (studentDoc.exists()) {
-                                helperList.add(studentDoc.toObject(UserModel.class));
-                                students.postValue(new ArrayList<>(helperList));
-                            }
-                        });
+
+                if (studentId != null) {
+
+                    if(studentId.equals(UserManager.getInstance().getUserId())){
+                        continue;
+                    }
+
+                    db.collection(Constants.USERS_COLLECTION).document(studentId)
+                            .get().addOnSuccessListener(studentDoc -> {
+                                if (studentDoc.exists()) {
+                                    helperList.add(studentDoc.toObject(UserModel.class));
+                                    students.postValue(new ArrayList<>(helperList));
+                                }
+                            });
+                }
             }
         });
 
@@ -107,7 +112,7 @@ public class EnrollmentsRepository {
                         boolean isEnrolled = !task.getResult().isEmpty();
                         taskCompletionSource.setResult(isEnrolled);
                     } else {
-                        taskCompletionSource.setException(task.getException());
+                        taskCompletionSource.setException(Objects.requireNonNull(task.getException()));
                     }
                 });
         return taskCompletionSource.getTask();

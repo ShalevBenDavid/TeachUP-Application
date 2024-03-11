@@ -1,22 +1,29 @@
 package com.example.login2.Repositories;
 
-import android.util.Log;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.login2.Models.CourseModel;
+import com.example.login2.Models.UserModel;
 import com.example.login2.Utils.Constants;
+import com.example.login2.Utils.UserManager;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CourseRepository {
-    private final FirebaseFirestore db;
+    private FirebaseFirestore db;
+    private MutableLiveData<List<CourseModel>> coursesLiveData = new MutableLiveData<>();
+    private List<CourseModel> courseList = new ArrayList<>();
+
 
     public CourseRepository(){
         db = FirebaseFirestore.getInstance();
@@ -28,27 +35,41 @@ public class CourseRepository {
 
     public void deleteCourse(String courseId){
         db.collection(Constants.COURSE_COLLECTION).document(courseId).delete().addOnSuccessListener(aVoid->{
-            Log.e("delete","deleted");
         });
-
     }
 
     public Task<CourseModel>  getCourse(String courseId){
-       TaskCompletionSource<CourseModel> taskCompletionSource = new TaskCompletionSource<>();
+        TaskCompletionSource<CourseModel> taskCompletionSource = new TaskCompletionSource<>();
 
-       db.collection(Constants.COURSE_COLLECTION).document(courseId).get()
-               .addOnSuccessListener(documentSnapshot -> {
-                   CourseModel course = documentSnapshot.toObject(CourseModel.class);
-                   taskCompletionSource.setResult(course);
-               })
-               .addOnFailureListener(taskCompletionSource::setException);
+        db.collection(Constants.COURSE_COLLECTION).document(courseId).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    CourseModel course = documentSnapshot.toObject(CourseModel.class);
+                    taskCompletionSource.setResult(course);
+                })
+                .addOnFailureListener(taskCompletionSource::setException);
 
-       return taskCompletionSource.getTask();
+        return taskCompletionSource.getTask();
     }
 
-    public Query getAllCoursesTaughtBy(String userId){
-        return db.collection("courses").
-                whereEqualTo("courseTeacherId",userId);
+    public LiveData<List<CourseModel>> getAllCoursesTaughtBy(String userId){
+        listenForDataChanges(userId);
+        return coursesLiveData;
+    }
+
+    private void listenForDataChanges(String userId) {
+        FirebaseFirestore.getInstance().collection(Constants.COURSE_COLLECTION)
+                .whereEqualTo("courseTeacherId",userId)
+                .addSnapshotListener((snapshot,e) ->{
+                    if(e != null){
+                        return;
+                    }
+                    if(snapshot != null) {
+                        for (DocumentChange documentChange : snapshot.getDocumentChanges()) {
+                            courseList.add(documentChange.getDocument().toObject(CourseModel.class));
+                        }
+                    }
+                    coursesLiveData.postValue(courseList);
+                });
     }
 
     public void addCourse(CourseModel newCourse) {
@@ -57,7 +78,22 @@ public class CourseRepository {
         newCourse.setCourseId(reference.getId());
 
         reference.set(newCourse);
+
+        EnrollmentsRepository repository = new EnrollmentsRepository();
+        repository.enrollStudent(newCourse.getCourseId(), UserManager.getInstance().getUserId(), new EnrollmentsRepository.EnrollmentCallback() {
+            @Override
+            public void onSuccess(List<UserModel> students) {
+                courseList.add(newCourse);
+                coursesLiveData.postValue(courseList);
+            }
+
+            @Override
+            public void onError(String error) {
+
+            }
+        });
     }
+
 
     public Task<Boolean> doesExist(String code) {
         TaskCompletionSource<Boolean> taskCompletionSource = new TaskCompletionSource<>();
@@ -66,33 +102,29 @@ public class CourseRepository {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 boolean exists = document != null && document.exists();
-                Log.e("doesExist", "Document exists: " + exists);
                 taskCompletionSource.setResult(exists);
             } else {
-                Log.e("doesExist", "Error: ", task.getException());
-                taskCompletionSource.setException(task.getException());
+                taskCompletionSource.setException(Objects.requireNonNull(task.getException()));
             }
         });
 
         return taskCompletionSource.getTask();
     }
 
-    public Task<List<CourseModel>> getCourses(List<String> courseIds){
+    public LiveData<List<CourseModel>> getCourses(List<String> courseIds){
         List<Task<CourseModel>> tasks = new ArrayList<>();
+
         for(String courseId: courseIds){
             tasks.add(getCourse(courseId));
         }
 
-        TaskCompletionSource<List<CourseModel>> taskCompletionSource = new TaskCompletionSource<>();
-
         Tasks.whenAllSuccess(tasks).addOnSuccessListener(courseModels ->{
-            List<CourseModel> courses = new ArrayList<>();
             for(Object model : courseModels){
-                courses.add((CourseModel) model);
+                courseList.add((CourseModel) model);
             }
-            taskCompletionSource.setResult(courses);
-        }).addOnFailureListener(taskCompletionSource::setException);
+            coursesLiveData.setValue(courseList);
+        });
 
-        return taskCompletionSource.getTask();
+        return coursesLiveData;
     }
 }

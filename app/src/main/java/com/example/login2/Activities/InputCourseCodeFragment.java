@@ -31,7 +31,7 @@ public class InputCourseCodeFragment extends DialogFragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentInputCourseCodeBinding.inflate(inflater, container, false);
         return binding.getRoot();

@@ -15,26 +15,22 @@ public class UserRepository {
 
     public void addUser(UserModel user, FirestoreRepositoryCallback listener){
         db.collection(Constants.USERS_COLLECTION).document(user.getUserId()).set(user)
-                .addOnSuccessListener(aVoid -> {
-                    listener.onSuccess(null);
-                }).addOnFailureListener(e ->{
-                    listener.onError(e.getMessage());
-                });
+                .addOnSuccessListener(aVoid -> listener.onSuccess(null)).addOnFailureListener(e -> listener.onError(e.getMessage()));
     }
 
 
     public void editUser(String userId,
-                         Map<String,String> updates,
+                         Map<String,Object> updates,
                          FirestoreRepositoryCallback listener){
 
+            db.collection(Constants.USERS_COLLECTION).document(userId).update(updates)
+                    .addOnSuccessListener(aVoid -> listener.onSuccess(null)).addOnFailureListener(e -> listener.onError(e.getMessage()));
     }
 
     public void getCurrentUser(String userId, FirestoreRepositoryCallback listener){
-         db.collection(Constants.USERS_COLLECTION).document(userId).get().addOnSuccessListener(documentSnapshot -> {
-             listener.onSuccess(documentSnapshot.toObject(UserModel.class));
-         }).addOnFailureListener(e ->{
-             listener.onError(e.getMessage());
-         });
+         db.collection(Constants.USERS_COLLECTION).document(userId).get().
+                 addOnSuccessListener(documentSnapshot -> listener.onSuccess(documentSnapshot.toObject(UserModel.class)))
+                 .addOnFailureListener(e -> listener.onError(e.getMessage()));
     }
 
 

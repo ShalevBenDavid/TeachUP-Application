@@ -11,6 +11,7 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="200dp"
         android:background="@drawable/header_shape">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -18,7 +19,10 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_alignParentEnd="true"
-            android:layout_margin="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
             android:src="@drawable/student_"
             app:civ_border_color="@color/white"
             app:civ_border_width="3dp" />
@@ -90,32 +94,29 @@
                 android:layout_gravity="center"
                 android:id="@+id/courseCode"
                 />
-
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/activiesLayout"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_centerInParent="true">
+    <RelativeLayout
+        android:id="@+id/activitiesLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="300dp">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/studyMaterialCard"
-            android:layout_width="115dp"
+            android:layout_width="125dp"
             android:layout_height="125dp"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="72dp"
-            android:layout_marginBottom="172dp"
+            android:layout_marginEnd="20dp"
             app:cardCornerRadius="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:strokeColor="@color/bg_color"
             app:strokeWidth="2dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="10dp"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -134,62 +135,20 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/quizActivity"
-            android:layout_width="115dp"
-            android:layout_height="125dp"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="256dp"
-            android:layout_marginEnd="224dp"
-            android:layout_toEndOf="@id/studyMaterialCard"
-            app:cardCornerRadius="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="@color/bg_color"
-            app:strokeWidth="2dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_marginStart="10dp"
-                    android:src="@drawable/exam_svgrepo_com" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="Class Chat"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-
-        </com.google.android.material.card.MaterialCardView>
-
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/chatActivity"
-            android:layout_width="115dp"
+            android:layout_width="125dp"
             android:layout_height="125dp"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="100dp"
-            android:layout_marginEnd="72dp"
+            android:layout_centerHorizontal="true"
             android:layout_toEndOf="@id/studyMaterialCard"
             app:cardCornerRadius="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:strokeColor="@color/bg_color"
             app:strokeWidth="2dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_margin="10dp"
                 android:gravity="center"
                 android:orientation="vertical">
@@ -197,7 +156,6 @@
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:layout_marginStart="5dp"
                     android:src="@drawable/chat_svgrepo_com" />
 
                 <TextView
@@ -207,9 +165,76 @@
                     android:text="Class Chat"
                     android:textStyle="bold" />
             </LinearLayout>
-
-
         </com.google.android.material.card.MaterialCardView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/quizActivity"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_below="@id/studyMaterialCard"
+            android:layout_alignStart="@id/studyMaterialCard"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            app:cardCornerRadius="10dp"
+            app:strokeColor="@color/bg_color"
+            app:strokeWidth="2dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/medal_svgrepo_com" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Quizzes"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/courseList"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_below="@id/chatActivity"
+            android:layout_alignStart="@id/chatActivity"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            app:cardCornerRadius="10dp"
+            app:strokeColor="@color/bg_color"
+            app:strokeWidth="2dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="8dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/bookshelf_svgrepo_com" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="Course List"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -6,10 +6,10 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.login2.Adapters.MessageAdapter;
@@ -20,22 +20,24 @@ import com.example.login2.Repositories.ChatRepository;
 import com.example.login2.Utils.CourseManager;
 import com.example.login2.Utils.CustomUtils;
 import com.example.login2.Utils.UserManager;
+import com.example.login2.ViewModels.ChatViewModel;
 import com.example.login2.databinding.ActivityGroupChatBinding;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 
 public class GroupChatActivity extends AppCompatActivity {
     private ActivityGroupChatBinding binding;
     private MessageAdapter groupMessageAdapter;
-    private ChatRepository repository;
+    private ChatViewModel chatViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityGroupChatBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
 
+        // Defining layout and setting the content view of the activity.
+        binding = ActivityGroupChatBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // Set up the toolbar.
         setSupportActionBar(binding.toolbar);
 
         // Remove the default app name from the toolbar.
@@ -44,19 +46,25 @@ public class GroupChatActivity extends AppCompatActivity {
         }
 
         // On press, navigate back to the previous activity.
-        binding.backButton.setOnClickListener(v -> onBackPressed());
+        binding.backButton.setOnClickListener(view -> {
+            finish();
+        });
 
-        repository = new ChatRepository();
-        FirestoreRecyclerOptions<MessageModel> options = new FirestoreRecyclerOptions.Builder<MessageModel>()
-                .setQuery(repository.getChatMessages(getGroupChatId()),MessageModel.class).build();
-        groupMessageAdapter = new MessageAdapter(options,this);
+        // Initialize RecyclerView and MessageAdapter.
+
+        groupMessageAdapter = new MessageAdapter(this);
         binding.groupChatRecycler.setAdapter(groupMessageAdapter);
         binding.groupChatRecycler.setLayoutManager(new LinearLayoutManager(this));
+        chatViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
+        chatViewModel.setChatId(getGroupChatId());
+        chatViewModel.getMessages().observe(this, messages -> {
+            groupMessageAdapter.setMessages(messages);
+        });
 
-        // Clicking the send group message button
+        // Clicking the send message button.
         binding.sendGroupMessageIcon.setOnClickListener(v -> {
             String groupMessage = binding.groupMessageEdit.getText().toString();
-            // If there is a message, send it. Otherwise, show error and grey out the button.
+            // If there is a message, send it. Otherwise, show error.
             if (groupMessage.trim().length() > 0) {
                 sendGroupMessage(groupMessage);
             } else {
@@ -65,14 +73,14 @@ public class GroupChatActivity extends AppCompatActivity {
             }
         });
 
-        // Monitor the group text box and update the send icon accordingly
+        // Monitor the text box and update the send icon accordingly.
         binding.groupMessageEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                // Check if there's text in the group text box and set the send icon accordingly
+                // Check if there's text in the text box and set the send icon accordingly.
                 if (charSequence.length() > 0) {
                     binding.sendGroupMessageIcon.setImageResource(R.drawable.send_icon_after);
                 } else {
@@ -91,14 +99,13 @@ public class GroupChatActivity extends AppCompatActivity {
         String groupChatId = getGroupChatId();
 
         // Send group message to the group chat document.
-        repository.sendMessage(groupMessageModel,
-                groupChatId,
-                new ChatRepository.groupChatCallback() {
+        chatViewModel.sendMessage(groupMessageModel,
+                new ChatRepository.ChatCallback() {
             @Override
             public void onSuccess() {
                 binding.groupChatRecycler.scrollToPosition(groupMessageAdapter.getItemCount() - 1);
 
-                // After sending group message, clear the group message box
+                // After sending group message, clear the message box.
                 binding.groupMessageEdit.setText("");
             }
 
@@ -109,11 +116,18 @@ public class GroupChatActivity extends AppCompatActivity {
         });
     }
 
+    private MessageModel createMessageModel(String message){
+        return new MessageModel(UserManager.getInstance().getUserId(),
+                UserManager.getInstance().getUserName(),message,
+                true);
+    }
+
     private String getGroupChatId(){
         CourseModel courseModel = CourseManager.getInstance().getCurrentCourse();
-        return courseModel.getCourseId()+courseModel.getCourseTeacherId();
+        return courseModel.getCourseId() + courseModel.getCourseTeacherId();
     }
-    // Create options menu in the toolbar
+
+    // Create options menu in the toolbar.
     @Override
     public boolean onCreateOptionsMenu (Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -129,28 +143,6 @@ public class GroupChatActivity extends AppCompatActivity {
             logoutItem.setVisible(false);
         }
         return super.onPrepareOptionsMenu(menu);
-    }
-
-    private MessageModel createMessageModel(String message){
-        return new MessageModel(UserManager.getInstance().getUserId(),
-                UserManager.getInstance().getUserName(),message,
-                true);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(groupMessageAdapter != null) {
-            groupMessageAdapter.startListening();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if(groupMessageAdapter != null) {
-            groupMessageAdapter.stopListening();
-        }
     }
 
 }

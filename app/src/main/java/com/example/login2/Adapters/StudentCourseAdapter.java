@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -16,28 +15,31 @@ import com.example.login2.Models.CourseModel;
 import com.example.login2.R;
 import com.example.login2.Utils.CourseManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StudentCourseAdapter extends RecyclerView.Adapter<CourseViewHolder> {
-    Context context;
-    List<CourseModel> courses;
+    private final Context context;
+    private List<CourseModel> courses = new ArrayList<>();
 
 
-    public StudentCourseAdapter(Context context, List<CourseModel> courses) {
+    public StudentCourseAdapter(Context context) {
         this.context = context;
+    }
+
+    public void setCourses(List<CourseModel> courses){
         this.courses = courses;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public CourseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.course_recycle_item, parent, false);
-        return new CourseViewHolder(view);
+        return new CourseViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.course_recycle_item, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull CourseViewHolder holder, int position) {
-        CourseModel course = courses.get(position);
         holder.courseName.setText(courses.get(position).getCourseName());
         holder.courseTeacher.setText(courses.get(position).getTeacherName());
         holder.courseDescription.setText(courses.get(position).getCourseDescription());

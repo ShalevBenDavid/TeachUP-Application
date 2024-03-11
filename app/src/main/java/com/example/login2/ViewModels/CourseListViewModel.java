@@ -9,15 +9,12 @@ import com.example.login2.Repositories.CourseRepository;
 import com.example.login2.Repositories.EnrollmentsRepository;
 import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.UserManager;
-import com.google.firebase.firestore.DocumentSnapshot;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CourseListViewModel extends ViewModel {
     private MutableLiveData<List<CourseModel>> courses;
     private final CourseRepository courseRepository = new CourseRepository();
-    private MutableLiveData<String> errorMessages = new MutableLiveData<>();
     private EnrollmentsRepository enrollmentsRepository;
 
     public LiveData<List<CourseModel>> getCourses(String userType) {
@@ -25,41 +22,27 @@ public class CourseListViewModel extends ViewModel {
             courses = new MutableLiveData<>();
             if (userType.equals(Constants.TYPE_STUDENT)) {
                 enrollmentsRepository = new EnrollmentsRepository();
-                loadStudentCourses(userType);
+                loadStudentCourses();
             } else {
-                loadTeacherCourses();
-
+                return getAllCoursesTaughtBy();
             }
         }
         return courses;
     }
 
-    private void loadStudentCourses(String userType) {
+    private void loadStudentCourses() {
         enrollmentsRepository.getUserEnrollments(UserManager.getInstance().getUserId())
                 .addOnSuccessListener(ids ->{
-                    courseRepository.getCourses(ids)
-                            .addOnSuccessListener(courseList ->{
-                                courses.setValue(courseList);
-                    });
+                    LiveData<List<CourseModel>> liveDataCourses = courseRepository.getCourses(ids);
+                    liveDataCourses.observeForever(coursesList -> courses.setValue(coursesList));
                 });
     }
 
-    private void loadTeacherCourses() {
-        courseRepository.getAllCoursesTaughtBy(UserManager.getInstance().getUserId())
-                .addSnapshotListener((querySnapshot, e) -> {
-                    if (e != null) {
-                        errorMessages.setValue("Error fetching courses: " + e.getMessage());
-                        return;
-                    }
+    private LiveData<List<CourseModel>> getAllCoursesTaughtBy() {
+        return courseRepository.getAllCoursesTaughtBy(UserManager.getInstance().getUserId());
+    }
 
-                    if (!(querySnapshot == null || querySnapshot.isEmpty())) {
-                        List<CourseModel> courseList = new ArrayList<>();
-                        for (DocumentSnapshot snapshot : querySnapshot.getDocuments()){
-                            courseList.add(snapshot.toObject(CourseModel.class));
-                        }
-                        courses.setValue(courseList);
-                    }
-                });
-
+    public void addCourse(CourseModel courseModel){
+        courseRepository.addCourse(courseModel);
     }
 }

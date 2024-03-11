@@ -5,12 +5,14 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.login2.Activities.ChatActivity;
+import com.example.login2.Activities.ProfileActivity;
 import com.example.login2.Models.UserModel;
 import com.example.login2.R;
 
@@ -20,7 +22,7 @@ import java.util.List;
 public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.StudentListViewHolder> {
 
     private List<UserModel> students = new ArrayList<>();
-    private Context context;
+    private final Context context;
 
 
     public StudentListAdapter(Context context) {
@@ -39,6 +41,15 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
         UserModel student = students.get(position);
         holder.userEmail.setText(student.getUserEmail());
         holder.userName.setText(student.getUserName());
+
+        // Upon clicking on the profile icon, open profile page.
+        holder.profileIcon.setOnClickListener(v ->{
+            Intent intent = new Intent(context, ProfileActivity.class);
+            intent.putExtra("userModel", student);
+            context.startActivity(intent);
+        });
+
+        // Upon clicking anywhere else on the card, open chat page.
         holder.itemView.setOnClickListener(v ->{
             Intent intent = new Intent(context, ChatActivity.class);
             intent.putExtra("name",student.getUserName());
@@ -63,10 +74,12 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
 
     public static class StudentListViewHolder extends RecyclerView.ViewHolder{
         TextView userEmail,userName;
+        ImageView profileIcon;
         public StudentListViewHolder(@NonNull View itemView) {
             super(itemView);
             userEmail = itemView.findViewById(R.id.useremail);
             userName = itemView.findViewById(R.id.username);
+            profileIcon = itemView.findViewById(R.id.profile);
         }
     }
 }

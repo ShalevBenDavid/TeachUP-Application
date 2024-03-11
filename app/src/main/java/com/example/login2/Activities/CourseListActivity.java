@@ -1,28 +1,22 @@
 package com.example.login2.Activities;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.activity.OnBackPressedDispatcher;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.login2.Adapters.StudentCourseAdapter;
 import com.example.login2.Adapters.TeacherCourseAdapter;
 import com.example.login2.Models.CourseModel;
-import com.example.login2.R;
-import com.example.login2.Repositories.CourseRepository;
 import com.example.login2.Repositories.FirebaseAuthRepository;
 import com.example.login2.Utils.Constants;
 import com.example.login2.Utils.UserManager;
 import com.example.login2.ViewModels.CourseListViewModel;
 import com.example.login2.databinding.ActivityCourseListBinding;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.firestore.Query;
 
 import java.util.List;
 
@@ -30,7 +24,6 @@ public class CourseListActivity extends AppCompatActivity {
     private ActivityCourseListBinding binding;
     private String userType;
     private TeacherCourseAdapter teacherCourseAdapter;
-    private CourseRepository courseRepository;
     private StudentCourseAdapter studentCourseAdapter;
     private CourseListViewModel courseListViewModel;
 
@@ -41,12 +34,14 @@ public class CourseListActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
         userType = UserManager.getInstance().getUserType();
+        if (userType == null) {
+            userType = getIntent().getStringExtra("type");
+        }
 
-        courseRepository = new CourseRepository();
         courseListViewModel = new ViewModelProvider(this).get(CourseListViewModel.class);
-        if(userType.equals(Constants.TYPE_TEACHER)){
+        if (userType.equals(Constants.TYPE_TEACHER)) {
             setupTeacherRecyclerView();
-        } else{
+        } else {
             observeStudentCourseData();
         }
         observeStudentCourseData();
@@ -70,20 +65,22 @@ public class CourseListActivity extends AppCompatActivity {
 
     private void setupStudentRecyclerView(List<CourseModel> courses) {
         binding.courseList.setLayoutManager(new LinearLayoutManager(this));
-        studentCourseAdapter = new StudentCourseAdapter(this, courses);
+        studentCourseAdapter = new StudentCourseAdapter(this);
         binding.courseList.setAdapter(studentCourseAdapter);
+
+        courseListViewModel.getCourses(UserManager.getInstance().getUserType())
+                .observe(this, studentCourses -> studentCourseAdapter.setCourses(studentCourses));
     }
 
     private void setupTeacherRecyclerView() {
-        Query query = courseRepository.getAllCoursesTaughtBy(UserManager.getInstance().getCurrentUserModel().getUserId());
-        FirestoreRecyclerOptions<CourseModel> options = new FirestoreRecyclerOptions.Builder<CourseModel>()
-                .setQuery(query, CourseModel.class).build();
-
         binding.courseList.setLayoutManager(new LinearLayoutManager(this));
-        teacherCourseAdapter = new TeacherCourseAdapter(options, this);
+        teacherCourseAdapter = new TeacherCourseAdapter(this);
         binding.courseList.setAdapter(teacherCourseAdapter);
-    }
 
+        courseListViewModel.getCourses(UserManager.getInstance().getUserType())
+                .observe(this, teacherCourses -> teacherCourseAdapter.setCourses(teacherCourses));
+
+    }
 
     private void setupFab() {
         binding.fab.setOnClickListener((v -> {
@@ -101,20 +98,4 @@ public class CourseListActivity extends AppCompatActivity {
         return studentCourseAdapter;
     }
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if (UserManager.getInstance().getUserType().equals(Constants.TYPE_TEACHER)) {
-            teacherCourseAdapter.startListening();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (UserManager.getInstance().getUserType().equals(Constants.TYPE_TEACHER)) {
-            teacherCourseAdapter.stopListening();
-        }
-    }
 }
