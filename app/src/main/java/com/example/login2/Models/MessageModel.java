@@ -1,22 +1,23 @@
 package com.example.login2.Models;
 
 
+import com.google.firebase.Timestamp;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.google.firebase.Timestamp;
+import lombok.Data;
+import lombok.NoArgsConstructor;;
 
-
+@Data
+@NoArgsConstructor
 public class MessageModel {
     private String messageId;
     private String senderId;
     private String senderName;
     private String message;
     private Timestamp time;
-
-
-
     private boolean isGroupMessage;
     // Constructor.
     public MessageModel (String senderId, String senderName, String message, boolean isGroupMessage) {
@@ -27,29 +28,13 @@ public class MessageModel {
         setTime();
     }
 
-    // Empty constructor.
-    public MessageModel () {}
-
-    // Getters.
-    public String getMessageId () { return messageId; }
-    public String getSenderId () { return senderId; }
-    public String getSenderName () { return senderName; }
-    public String getMessage () { return message; }
-    public Timestamp getTime(){
-        return time;
-    }
-    public String getFormatedTime () {
+    public String getFormattedTime () {
         Date currentDate = time.toDate();
 
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
         return sdf.format(currentDate);
     }
 
-    // Setters.
-    public void setMessageId (String messageId) { this.messageId = messageId; }
-    public void setSenderId (String senderId) { this.senderId = senderId; }
-    public void setSenderName (String senderName) { this.senderName = senderName; }
-    public void setMessage (String message) { this.message = message; }
     private void setTime () {
         this.time = Timestamp.now();
     }
@@ -61,4 +46,5 @@ public class MessageModel {
     public void setGroupMessage(boolean groupMessage) {
         isGroupMessage = groupMessage;
     }
+
 }

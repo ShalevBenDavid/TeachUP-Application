@@ -94,12 +94,12 @@ public class MessageAdapter extends FirestoreRecyclerAdapter<MessageModel, Messa
             }
 
             messagedRecieved.setText(messageModel.getMessage());
-            messageTime.setText(messageModel.getFormatedTime());
+            messageTime.setText(messageModel.getFormattedTime());
         }
 
         public void bindSentMessage(MessageModel messageModel) {
             messageSent.setText(messageModel.getMessage());
-            messageTime.setText(messageModel.getFormatedTime());
+            messageTime.setText(messageModel.getFormattedTime());
         }
     }
 }
